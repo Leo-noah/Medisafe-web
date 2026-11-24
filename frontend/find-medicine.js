@@ -2,7 +2,7 @@
   "use strict";
 
   const CATALOGUE_URL =
-  "../frontend/data/myanmar-200-general-information-audio-prelinked.json";
+    "./data/myanmar-200-general-information-audio-prelinked.json";
 
   const LANGUAGE_KEY = "medisafe-language";
   const PAGE_SIZE = 30;
@@ -22,8 +22,7 @@
       browseTitle: "Browse medicines · A–Z",
 
       photoTitle: "Have a medicine photo?",
-      photoDescription:
-        "Choose a clear photo of the medicine packaging.",
+      photoDescription: "Choose a clear photo of the medicine packaging.",
       choosePhoto: "Choose a photo",
       photoNote: "JPG, PNG or WebP · Maximum 8 MB",
       previewTitle: "Your selected photo",
@@ -31,8 +30,7 @@
         "Photo preview only. Medicine recognition is not connected yet.",
       removePhoto: "Remove photo",
       invalidPhoto: "Choose a JPG, PNG or WebP image up to 8 MB.",
-      unreadablePhoto:
-        "This image could not be opened. Choose another photo.",
+      unreadablePhoto: "This image could not be opened. Choose another photo.",
 
       catalogueLabel: "EXPLORE THE CATALOGUE",
       catalogueTitle: "Find what you are looking for",
@@ -40,11 +38,8 @@
       allCategories: "All categories",
       loading: "Loading medicines…",
 
-      
-
       emptyTitle: "No matching medicines",
-      emptyDescription:
-        "Try another spelling or choose a different category.",
+      emptyDescription: "Try another spelling or choose a different category.",
       clearFilters: "Clear filters",
 
       loadErrorTitle: "The medicine list is unavailable",
@@ -76,7 +71,7 @@
       detailsWarning:
         "Draft information: the lists may be incomplete. Confirm the actual product label and seek professional advice before use.",
 
-      footer: "Medicine information, made easier to explore."
+      footer: "Medicine information, made easier to explore.",
     },
 
     my: {
@@ -93,18 +88,15 @@
       browseTitle: "ဆေးအမည်များ · A–Z",
 
       photoTitle: "ဆေးပုံရှိပါသလား",
-      photoDescription:
-        "ဆေးထုပ်ပေါ်က စာသားရှင်းလင်းသော ပုံကို ရွေးပါ။",
+      photoDescription: "ဆေးထုပ်ပေါ်က စာသားရှင်းလင်းသော ပုံကို ရွေးပါ။",
       choosePhoto: "ဆေးပုံ ရွေးမည်",
       photoNote: "JPG၊ PNG သို့မဟုတ် WebP · အများဆုံး 8 MB",
       previewTitle: "သင်ရွေးထားသော ဆေးပုံ",
       recognitionPending:
         "ပုံအကြိုကြည့်ရှုမှုသာ ဖြစ်သည်။ ဆေးပုံခွဲခြားစနစ် မချိတ်ဆက်ရသေးပါ။",
       removePhoto: "ပုံဖယ်မည်",
-      invalidPhoto:
-        "8 MB ထက်မပိုသော JPG၊ PNG သို့မဟုတ် WebP ပုံကို ရွေးပါ။",
-      unreadablePhoto:
-        "ဤပုံကို မဖွင့်နိုင်ပါ။ အခြားပုံရွေးပါ။",
+      invalidPhoto: "8 MB ထက်မပိုသော JPG၊ PNG သို့မဟုတ် WebP ပုံကို ရွေးပါ။",
+      unreadablePhoto: "ဤပုံကို မဖွင့်နိုင်ပါ။ အခြားပုံရွေးပါ။",
 
       catalogueLabel: "ဆေးစာရင်းကို ကြည့်ရှုပါ",
       catalogueTitle: "သင်သိလိုသော ဆေးကို ရှာပါ",
@@ -112,11 +104,8 @@
       allCategories: "အမျိုးအစားအားလုံး",
       loading: "ဆေးစာရင်း ဖွင့်နေသည်…",
 
-      
-
       emptyTitle: "ကိုက်ညီသော ဆေးမတွေ့ပါ",
-      emptyDescription:
-        "စာလုံးပေါင်း သို့မဟုတ် အမျိုးအစား ပြောင်းရှာပါ။",
+      emptyDescription: "စာလုံးပေါင်း သို့မဟုတ် အမျိုးအစား ပြောင်းရှာပါ။",
       clearFilters: "ရှာဖွေမှု ပြန်စမည်",
 
       loadErrorTitle: "ဆေးစာရင်းကို မဖွင့်နိုင်ပါ",
@@ -148,12 +137,12 @@
       detailsWarning:
         "မူကြမ်းအချက်အလက်ဖြစ်၍ စာရင်းများ မပြည့်စုံနိုင်ပါ။ မသုံးမီ ဆေးအညွှန်းကို စစ်ဆေး၍ ကျန်းမာရေးပညာရှင်ထံ အကြံဉာဏ်တောင်းပါ။",
 
-      footer: "ဆေးဝါးအချက်အလက်ကို ပိုမိုလွယ်ကူစွာ ရှာဖွေရန်။"
-    }
+      footer: "ဆေးဝါးအချက်အလက်ကို ပိုမိုလွယ်ကူစွာ ရှာဖွေရန်။",
+    },
   };
 
   function initialisePage() {
-    const $ = id => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
     const searchInput = $("search");
     const categorySelect = $("category");
@@ -170,9 +159,7 @@
       !emptyState ||
       !loadError
     ) {
-      console.error(
-        "Find Medicine: required HTML element IDs are missing."
-      );
+      console.error("Find Medicine: required HTML element IDs are missing.");
       return;
     }
 
@@ -208,20 +195,14 @@
 
     function readLanguage() {
       try {
-        return localStorage.getItem(LANGUAGE_KEY) === "my"
-          ? "my"
-          : "en";
+        return localStorage.getItem(LANGUAGE_KEY) === "my" ? "my" : "en";
       } catch {
         return "en";
       }
     }
 
     function t(key) {
-      return (
-        translations[language][key] ||
-        translations.en[key] ||
-        key
-      );
+      return translations[language][key] || translations.en[key] || key;
     }
 
     function label(en, my) {
@@ -246,9 +227,9 @@
     }
 
     function number(value) {
-      return new Intl.NumberFormat(
-        language === "my" ? "my-MM" : "en"
-      ).format(value);
+      return new Intl.NumberFormat(language === "my" ? "my-MM" : "en").format(
+        value,
+      );
     }
 
     function medicineName(medicine) {
@@ -262,17 +243,9 @@
     }
 
     function lines(value) {
-      const values = Array.isArray(value)
-        ? value
-        : value
-          ? [value]
-          : [];
+      const values = Array.isArray(value) ? value : value ? [value] : [];
 
-      return [
-        ...new Set(
-          values.map(localised).filter(text => text.trim())
-        )
-      ];
+      return [...new Set(values.map(localised).filter((text) => text.trim()))];
     }
 
     /* --------------------------------------------------
@@ -285,10 +258,7 @@
       namePanel = element("section", "medicine-name-panel");
     }
 
-    namePanel.setAttribute(
-      "aria-labelledby",
-      "medicine-name-heading"
-    );
+    namePanel.setAttribute("aria-labelledby", "medicine-name-heading");
 
     const nameHeader = element("div", "medicine-name-heading");
 
@@ -306,47 +276,28 @@
     const pagination = element("nav", "medicine-pagination");
     pagination.hidden = true;
 
-    const browseControls = element(
-  "div",
-  "medicine-browse-controls"
-);
+    const browseControls = element("div", "medicine-browse-controls");
 
-const categoryField = categorySelect.closest(".category-field");
+    const categoryField = categorySelect.closest(".category-field");
 
-if (categoryField) {
-  browseControls.append(categoryField);
-}
+    if (categoryField) {
+      browseControls.append(categoryField);
+    }
 
-browseControls.append(nameCount);
+    browseControls.append(nameCount);
 
-// Title and description
-const browseIntro = element(
-  "div",
-  "medicine-browse-intro"
-);
+    // Title and description
+    const browseIntro = element("div", "medicine-browse-intro");
 
-const browseDescription = element(
-  "p",
-  "medicine-browse-description"
-);
+    const browseDescription = element("p", "medicine-browse-description");
 
-browseDescription.id = "medicine-browse-description";
+    browseDescription.id = "medicine-browse-description";
 
-browseIntro.append(
-  nameHeading,
-  browseDescription
-);
+    browseIntro.append(nameHeading, browseDescription);
 
-nameHeader.append(
-  browseIntro,
-  browseControls
-);
+    nameHeader.append(browseIntro, browseControls);
 
-    namePanel.replaceChildren(
-      nameHeader,
-      nameList,
-      pagination
-    );
+    namePanel.replaceChildren(nameHeader, nameList, pagination);
 
     const hero = document.querySelector(".hero");
 
@@ -361,15 +312,12 @@ nameHeader.append(
     -------------------------------------------------- */
 
     const searchBox =
-      searchInput.closest(".search-box") ||
-      searchInput.parentElement;
+      searchInput.closest(".search-box") || searchInput.parentElement;
 
     // Remove a previously inserted dropdown, if present.
     $("medicine-suggestions")?.remove();
 
-    searchBox
-      .querySelector(".medicine-search-status")
-      ?.remove();
+    searchBox.querySelector(".medicine-search-status")?.remove();
 
     const suggestions = element("div", "medicine-suggestions");
 
@@ -377,10 +325,7 @@ nameHeader.append(
     suggestions.hidden = true;
     suggestions.setAttribute("role", "listbox");
 
-    const searchStatus = element(
-      "span",
-      "medicine-search-status"
-    );
+    const searchStatus = element("span", "medicine-search-status");
 
     searchStatus.setAttribute("role", "status");
     searchStatus.setAttribute("aria-live", "polite");
@@ -405,11 +350,7 @@ nameHeader.append(
     }
 
     function showSuggestionMessage(message) {
-      const option = element(
-        "div",
-        "medicine-suggestion",
-        message
-      );
+      const option = element("div", "medicine-suggestion", message);
 
       option.setAttribute("role", "option");
       option.setAttribute("aria-disabled", "true");
@@ -431,37 +372,27 @@ nameHeader.append(
       if (!suggestionMatches.length) return;
 
       activeSuggestionIndex =
-        (index + suggestionMatches.length) %
-        suggestionMatches.length;
+        (index + suggestionMatches.length) % suggestionMatches.length;
 
       const options = [
-        ...suggestions.querySelectorAll(
-          'button[role="option"]'
-        )
+        ...suggestions.querySelectorAll('button[role="option"]'),
       ];
 
       options.forEach((option, optionIndex) => {
-        const active =
-          optionIndex === activeSuggestionIndex;
+        const active = optionIndex === activeSuggestionIndex;
 
         option.classList.toggle("is-active", active);
 
-        option.setAttribute(
-          "aria-selected",
-          String(active)
-        );
+        option.setAttribute("aria-selected", String(active));
       });
 
       const selected = options[activeSuggestionIndex];
 
       if (selected) {
-        searchInput.setAttribute(
-          "aria-activedescendant",
-          selected.id
-        );
+        searchInput.setAttribute("aria-activedescendant", selected.id);
 
         selected.scrollIntoView({
-          block: "nearest"
+          block: "nearest",
         });
       }
     }
@@ -482,23 +413,19 @@ nameHeader.append(
 
       if (loading || catalogueFailed) {
         showSuggestionMessage(
-          loading
-            ? t("loading")
-            : t("loadErrorDescription")
+          loading ? t("loading") : t("loadErrorDescription"),
         );
         return;
       }
 
       // Search ALL records, independently of browse pagination.
-      suggestionMatches = medicines.filter(medicine =>
-        [
-          medicine.generic_name_en,
-          medicine.generic_name_my
-        ].some(name =>
-          typeof name === "string" &&
-          name.trim() &&
-          normalise(name).startsWith(query)
-        )
+      suggestionMatches = medicines.filter((medicine) =>
+        [medicine.generic_name_en, medicine.generic_name_my].some(
+          (name) =>
+            typeof name === "string" &&
+            name.trim() &&
+            normalise(name).startsWith(query),
+        ),
       );
 
       if (!suggestionMatches.length) {
@@ -509,10 +436,7 @@ nameHeader.append(
       const fragment = document.createDocumentFragment();
 
       suggestionMatches.forEach((medicine, index) => {
-        const option = element(
-          "button",
-          "medicine-suggestion"
-        );
+        const option = element("button", "medicine-suggestion");
 
         option.type = "button";
         option.tabIndex = -1;
@@ -522,29 +446,26 @@ nameHeader.append(
         option.setAttribute("aria-selected", "false");
 
         option.append(
-          element(
-            "span",
-            "suggestion-primary",
-            medicineName(medicine)
-          )
+          element("span", "suggestion-primary", medicineName(medicine)),
         );
 
-        const secondaryName = language === "my"
-          ? medicine.generic_name_en
-          : medicine.generic_name_my;
+        const secondaryName =
+          language === "my"
+            ? medicine.generic_name_en
+            : medicine.generic_name_my;
 
         if (secondaryName) {
           const secondary = element(
             "span",
             "suggestion-secondary",
-            secondaryName
+            secondaryName,
           );
 
           secondary.lang = language === "my" ? "en" : "my";
           option.append(secondary);
         }
 
-        option.addEventListener("mousedown", event => {
+        option.addEventListener("mousedown", (event) => {
           event.preventDefault();
         });
 
@@ -562,7 +483,7 @@ nameHeader.append(
 
       searchStatus.textContent = label(
         `${suggestionMatches.length} suggestions available. Use arrow keys to choose.`,
-        `ဆေး ${number(suggestionMatches.length)} မျိုး တွေ့ပါသည်။ ရွေးရန် မြားခလုတ်များ သုံးနိုင်ပါသည်။`
+        `ဆေး ${number(suggestionMatches.length)} မျိုး တွေ့ပါသည်။ ရွေးရန် မြားခလုတ်များ သုံးနိုင်ပါသည်။`,
       );
     }
 
@@ -572,24 +493,15 @@ nameHeader.append(
 
     const oldPanel = $("medicine-dialog");
 
-    if (
-      oldPanel?.tagName === "DIALOG" &&
-      oldPanel.open
-    ) {
+    if (oldPanel?.tagName === "DIALOG" && oldPanel.open) {
       oldPanel.close();
     }
 
-    const infoPanel = element(
-      "section",
-      "medicine-inline-panel"
-    );
+    const infoPanel = element("section", "medicine-inline-panel");
 
     infoPanel.id = "medicine-dialog";
     infoPanel.hidden = true;
-    infoPanel.setAttribute(
-      "aria-labelledby",
-      "detail-title"
-    );
+    infoPanel.setAttribute("aria-labelledby", "detail-title");
 
     const toolbar = element("div", "dialog-toolbar");
 
@@ -624,25 +536,16 @@ nameHeader.append(
 
       for (const medicine of medicines) {
         if (medicine.category?.code) {
-          categories.set(
-            medicine.category.code,
-            medicine.category
-          );
+          categories.set(medicine.category.code, medicine.category);
         }
       }
 
-      categorySelect.replaceChildren(
-        new Option(t("allCategories"), "")
-      );
+      categorySelect.replaceChildren(new Option(t("allCategories"), ""));
 
       [...categories.entries()]
-        .sort((a, b) =>
-          localised(a[1]).localeCompare(localised(b[1]))
-        )
+        .sort((a, b) => localised(a[1]).localeCompare(localised(b[1])))
         .forEach(([code, category]) => {
-          categorySelect.add(
-            new Option(localised(category), code)
-          );
+          categorySelect.add(new Option(localised(category), code));
         });
 
       if (categories.has(selected)) {
@@ -655,11 +558,11 @@ nameHeader.append(
       document.title = t("pageTitle");
 
       browseDescription.textContent = label(
-    "Select a medicine name to read its uses and detailed information below.",
-    "ဆေးအမည်တစ်ခုကို နှိပ်ပြီး အသုံးပြုမှုနှင့် အသေးစိတ်အချက်အလက်များကို အောက်တွင် ဖတ်ရှုပါ။"
-  );
+        "Select a medicine name to read its uses and detailed information below.",
+        "ဆေးအမည်တစ်ခုကို နှိပ်ပြီး အသုံးပြုမှုနှင့် အသေးစိတ်အချက်အလက်များကို အောက်တွင် ဖတ်ရှုပါ။",
+      );
 
-      document.querySelectorAll("[data-i18n]").forEach(node => {
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
         const key = node.dataset.i18n;
 
         if (translations[language][key] !== undefined) {
@@ -667,20 +570,17 @@ nameHeader.append(
         }
       });
 
-      document.querySelectorAll("[data-language]").forEach(button => {
+      document.querySelectorAll("[data-language]").forEach((button) => {
         button.setAttribute(
           "aria-pressed",
-          String(button.dataset.language === language)
+          String(button.dataset.language === language),
         );
       });
 
       searchInput.placeholder = t("searchPlaceholder");
       nameHeading.textContent = t("browseTitle");
 
-      suggestions.setAttribute(
-        "aria-label",
-        t("searchLabel")
-      );
+      suggestions.setAttribute("aria-label", t("searchLabel"));
 
       const preview = $("photo-preview");
 
@@ -708,9 +608,7 @@ nameHeader.append(
     -------------------------------------------------- */
 
     function showNameMessage(text) {
-      nameList.append(
-        element("p", "medicine-name-message", text)
-      );
+      nameList.append(element("p", "medicine-name-message", text));
     }
 
     function renderMedicines() {
@@ -731,13 +629,10 @@ nameHeader.append(
 
       if (draftNotice) {
         draftNotice.hidden =
-          loading ||
-          catalogueFailed ||
-          !medicines.some(isDraft);
+          loading || catalogueFailed || !medicines.some(isDraft);
       }
 
-      infoPanel.hidden =
-        !activeMedicine || loading || catalogueFailed;
+      infoPanel.hidden = !activeMedicine || loading || catalogueFailed;
 
       if (loading) {
         resultCount.textContent = t("loading");
@@ -754,37 +649,29 @@ nameHeader.append(
       const selectedCategory = categorySelect.value;
 
       // Search input is intentionally not used here.
-      const browseRecords = medicines.filter(medicine =>
-        !selectedCategory ||
-        medicine.category?.code === selectedCategory
+      const browseRecords = medicines.filter(
+        (medicine) =>
+          !selectedCategory || medicine.category?.code === selectedCategory,
       );
 
       const totalPages = Math.max(
         1,
-        Math.ceil(browseRecords.length / PAGE_SIZE)
+        Math.ceil(browseRecords.length / PAGE_SIZE),
       );
 
-      currentPage = Math.max(
-        1,
-        Math.min(currentPage, totalPages)
-      );
+      currentPage = Math.max(1, Math.min(currentPage, totalPages));
 
       const startIndex = (currentPage - 1) * PAGE_SIZE;
 
-      const visible = browseRecords.slice(
-        startIndex,
-        startIndex + PAGE_SIZE
-      );
+      const visible = browseRecords.slice(startIndex, startIndex + PAGE_SIZE);
 
-      const firstNumber = browseRecords.length
-        ? startIndex + 1
-        : 0;
+      const firstNumber = browseRecords.length ? startIndex + 1 : 0;
 
       const lastNumber = startIndex + visible.length;
 
       const countText = label(
         `Showing ${number(firstNumber)}–${number(lastNumber)} of ${number(browseRecords.length)} medicines`,
-        `ဆေး ${number(browseRecords.length)} မျိုးအနက် ${number(firstNumber)}–${number(lastNumber)} ကို ပြထားသည်`
+        `ဆေး ${number(browseRecords.length)} မျိုးအနက် ${number(firstNumber)}–${number(lastNumber)} ကို ပြထားသည်`,
       );
 
       resultCount.textContent = countText;
@@ -803,14 +690,14 @@ nameHeader.append(
         const button = element(
           "button",
           "medicine-name-button",
-          medicineName(medicine)
+          medicineName(medicine),
         );
 
         button.type = "button";
 
         button.setAttribute(
           "aria-label",
-          `${t("viewDetails")}: ${medicineName(medicine)}`
+          `${t("viewDetails")}: ${medicineName(medicine)}`,
         );
 
         if (medicine === activeMedicine) {
@@ -831,13 +718,9 @@ nameHeader.append(
         targetPage,
         accessibleLabel,
         disabled = false,
-        current = false
+        current = false,
       ) {
-        const button = element(
-          "button",
-          "medicine-page-button",
-          text
-        );
+        const button = element("button", "medicine-page-button", text);
 
         button.type = "button";
         button.disabled = disabled;
@@ -863,26 +746,23 @@ nameHeader.append(
         "«",
         1,
         label("First page", "ပထမဆုံးစာမျက်နှာ"),
-        currentPage === 1
+        currentPage === 1,
       );
 
       addPageButton(
         "‹",
         currentPage - 1,
         label("Previous page", "ရှေ့စာမျက်နှာ"),
-        currentPage === 1
+        currentPage === 1,
       );
 
       for (let page = 1; page <= totalPages; page++) {
         addPageButton(
           number(page),
           page,
-          label(
-            `Page ${page}`,
-            `စာမျက်နှာ ${number(page)}`
-          ),
+          label(`Page ${page}`, `စာမျက်နှာ ${number(page)}`),
           false,
-          page === currentPage
+          page === currentPage,
         );
       }
 
@@ -890,22 +770,19 @@ nameHeader.append(
         "›",
         currentPage + 1,
         label("Next page", "နောက်စာမျက်နှာ"),
-        currentPage === totalPages
+        currentPage === totalPages,
       );
 
       addPageButton(
         "»",
         totalPages,
         label("Last page", "နောက်ဆုံးစာမျက်နှာ"),
-        currentPage === totalPages
+        currentPage === totalPages,
       );
 
       pagination.setAttribute(
         "aria-label",
-        label(
-          "Medicine catalogue pagination",
-          "ဆေးစာရင်း စာမျက်နှာများ"
-        )
+        label("Medicine catalogue pagination", "ဆေးစာရင်း စာမျက်နှာများ"),
       );
 
       pagination.hidden = false;
@@ -914,11 +791,7 @@ nameHeader.append(
         grid.hidden = false;
 
         grid.append(
-          element(
-            "p",
-            "medicine-selection-hint",
-            t("selectionHint")
-          )
+          element("p", "medicine-selection-hint", t("selectionHint")),
         );
       }
     }
@@ -950,10 +823,10 @@ nameHeader.append(
       }
 
       infoPanel.scrollIntoView({
-        behavior: window.matchMedia(
-          "(prefers-reduced-motion: reduce)"
-        ).matches ? "auto" : "smooth",
-        block: "start"
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "start",
       });
     }
 
@@ -961,13 +834,7 @@ nameHeader.append(
       const text = localised(value);
 
       if (text) {
-        parent.append(
-          element(
-            "p",
-            className || "medicine-detail-note",
-            text
-          )
-        );
+        parent.append(element("p", className || "medicine-detail-note", text));
       }
     }
 
@@ -986,9 +853,7 @@ nameHeader.append(
 
         section.append(list);
       } else {
-        section.append(
-          element("p", "", t("notPrepared"))
-        );
+        section.append(element("p", "", t("notPrepared")));
       }
 
       detailContent.append(section);
@@ -1003,21 +868,11 @@ nameHeader.append(
       const parts = [];
 
       if (years || !months) {
-        parts.push(
-          label(
-            `${years} years`,
-            `${number(years)} နှစ်`
-          )
-        );
+        parts.push(label(`${years} years`, `${number(years)} နှစ်`));
       }
 
       if (months) {
-        parts.push(
-          label(
-            `${months} months`,
-            `${number(months)} လ`
-          )
-        );
+        parts.push(label(`${months} months`, `${number(months)} လ`));
       }
 
       return parts.join(" ");
@@ -1034,27 +889,21 @@ nameHeader.append(
       if (minimum && maximum) {
         return label(
           `${minimum} to under ${maximum}`,
-          `${minimum} မှ ${maximum} မပြည့်မီ`
+          `${minimum} မှ ${maximum} မပြည့်မီ`,
         );
       }
 
       if (minimum) {
-        return label(
-          `${minimum} and above`,
-          `${minimum} နှင့်အထက်`
-        );
+        return label(`${minimum} and above`, `${minimum} နှင့်အထက်`);
       }
 
       if (maximum) {
-        return label(
-          `Under ${maximum}`,
-          `${maximum} အောက်`
-        );
+        return label(`Under ${maximum}`, `${maximum} အောက်`);
       }
 
       return label(
         "See product restrictions",
-        "ဆေးအလိုက် ကန့်သတ်ချက်ကို ကြည့်ပါ"
+        "ဆေးအလိုက် ကန့်သတ်ချက်ကို ကြည့်ပါ",
       );
     }
 
@@ -1063,12 +912,9 @@ nameHeader.append(
       if (typeof weight === "string") return weight;
 
       return (
-        (
-          language === "my"
-            ? weight.display_my || weight.display_en
-            : weight.display_en || weight.display_my
-        ) ||
-        localised(weight)
+        (language === "my"
+          ? weight.display_my || weight.display_en
+          : weight.display_en || weight.display_my) || localised(weight)
       );
     }
 
@@ -1096,13 +942,10 @@ nameHeader.append(
 
         label(
           "Daily limit / stated regimen",
-          "နေ့စဉ်ကန့်သတ်ချက် / ဖော်ပြကုသပုံ"
+          "နေ့စဉ်ကန့်သတ်ချက် / ဖော်ပြကုသပုံ",
         ),
 
-        label(
-          "Reference context / notes",
-          "ကိုးကားအခြေအနေ / မှတ်ချက်"
-        )
+        label("Reference context / notes", "ကိုးကားအခြေအနေ / မှတ်ချက်"),
       ];
 
       const thead = element("thead");
@@ -1134,10 +977,8 @@ nameHeader.append(
 
           addCell(
             tr,
-            childTable
-              ? weightText(row.weight)
-              : localised(row.population),
-            ageRange(row)
+            childTable ? weightText(row.weight) : localised(row.population),
+            ageRange(row),
           );
 
           addCell(
@@ -1145,22 +986,15 @@ nameHeader.append(
             language === "my"
               ? row.formulation_my || localised(row.formulation)
               : localised(row.formulation),
-            localised(row.indication)
+            localised(row.indication),
           );
 
           addCell(tr, localised(row.dose));
           addCell(tr, localised(row.interval));
 
-          addCell(
-            tr,
-            localised(row.maximum_in_24_hours)
-          );
+          addCell(tr, localised(row.maximum_in_24_hours));
 
-          addCell(
-            tr,
-            localised(row.reference_region),
-            localised(row.note)
-          );
+          addCell(tr, localised(row.reference_region), localised(row.note));
 
           tbody.append(tr);
         }
@@ -1185,39 +1019,28 @@ nameHeader.append(
       const title = element(
         "h2",
         "",
-        [
-          medicine.generic_name_en,
-          medicine.generic_name_my
-        ]
+        [medicine.generic_name_en, medicine.generic_name_my]
           .filter(Boolean)
-          .join(" · ")
+          .join(" · "),
       );
 
       title.id = "detail-title";
       detailContent.append(title);
 
-      addNote(
-        detailContent,
-        medicine.category,
-        "medicine-detail-category"
-      );
+      addNote(detailContent, medicine.category, "medicine-detail-category");
 
       if (isDraft(medicine)) {
-        addNote(
-          detailContent,
-          t("detailsWarning"),
-          "notice detail-warning"
-        );
+        addNote(detailContent, t("detailsWarning"), "notice detail-warning");
       }
 
       addNote(
         detailContent,
         medicine.key_information,
-        "medicine-key-information"
+        "medicine-key-information",
       );
 
       const ingredients = Array.isArray(medicine.ingredients)
-        ? medicine.ingredients.map(ingredient => {
+        ? medicine.ingredients.map((ingredient) => {
             if (typeof ingredient === "string") {
               return ingredient;
             }
@@ -1228,20 +1051,14 @@ nameHeader.append(
           })
         : [];
 
-      const ingredientSection = addSection(
-        t("ingredients"),
-        ingredients
-      );
+      const ingredientSection = addSection(t("ingredients"), ingredients);
 
-      addNote(
-        ingredientSection,
-        medicine.ingredient_scope
-      );
+      addNote(ingredientSection, medicine.ingredient_scope);
 
       addSection(t("uses"), medicine.uses);
 
       const forms = Array.isArray(medicine.formulations)
-        ? medicine.formulations.map(form => {
+        ? medicine.formulations.map((form) => {
             if (typeof form === "string") return form;
 
             const strength =
@@ -1252,7 +1069,7 @@ nameHeader.append(
             return [
               localised(form.dosage_form),
               localised(form.route),
-              strength
+              strength,
             ]
               .filter(Boolean)
               .join(" · ");
@@ -1263,15 +1080,12 @@ nameHeader.append(
       addSection(t("howToUse"), medicine.how_to_use);
       addSection(t("sideEffects"), medicine.side_effects);
 
-      addSection(
-        t("contraindications"),
-        medicine.contraindications
-      );
+      addSection(t("contraindications"), medicine.contraindications);
 
       addSection(t("precautions"), medicine.precautions);
 
       const interactions = Array.isArray(medicine.drug_interactions)
-        ? medicine.drug_interactions.map(item => {
+        ? medicine.drug_interactions.map((item) => {
             const text = localised(item);
 
             return item?.related_ingredient
@@ -1286,7 +1100,7 @@ nameHeader.append(
 
       const pregnancySection = addSection(
         t("pregnancy"),
-        pregnancy?.guidance || pregnancy
+        pregnancy?.guidance || pregnancy,
       );
 
       if (
@@ -1297,15 +1111,12 @@ nameHeader.append(
           pregnancySection,
           label(
             "This includes category-level guidance; individual pregnancy and breastfeeding suitability still requires review.",
-            "ဤအပိုင်းတွင် ဆေးအုပ်စုဆိုင်ရာညွှန်ကြားချက် ပါဝင်သည်။ တစ်ဦးချင်း ကိုယ်ဝန်၊ နို့တိုက်အခြေအနေအတွက် သင့်မသင့် သီးခြားစစ်ဆေးရန်လိုသည်။"
-          )
+            "ဤအပိုင်းတွင် ဆေးအုပ်စုဆိုင်ရာညွှန်ကြားချက် ပါဝင်သည်။ တစ်ဦးချင်း ကိုယ်ဝန်၊ နို့တိုက်အခြေအနေအတွက် သင့်မသင့် သီးခြားစစ်ဆေးရန်လိုသည်။",
+          ),
         );
       }
 
-      addSection(
-        t("monitoring"),
-        medicine.monitoring_and_when_to_seek_help
-      );
+      addSection(t("monitoring"), medicine.monitoring_and_when_to_seek_help);
 
       addSection(t("missedDose"), medicine.missed_dose);
       addSection(t("overdose"), medicine.overdose_warning);
@@ -1316,45 +1127,41 @@ nameHeader.append(
       addNote(
         detailContent,
         dosage.table_interpretation,
-        "medicine-key-information"
+        "medicine-key-information",
       );
 
       addDosageTable(
         label(
           "Table 1 · Formulation and dosage",
-          "ဇယား ၁ · ဆေးပုံစံနှင့် ဆေးပမာဏ"
+          "ဇယား ၁ · ဆေးပုံစံနှင့် ဆေးပမာဏ",
         ),
         dosage.table_1_formulation_dosage,
-        false
+        false,
       );
 
       addDosageTable(
         label(
           "Table 2 · Child weight–age–dose",
-          "ဇယား ၂ · ကလေး အလေးချိန်–အသက်–ပမာဏ"
+          "ဇယား ၂ · ကလေး အလေးချိန်–အသက်–ပမာဏ",
         ),
         dosage.table_2_child_weight_age_dose,
-        true
+        true,
       );
 
-        addNote(
-    detailContent,
-    medicine.clinical_scope,
-    "medicine-detail-scope"
-  );
+      addNote(detailContent, medicine.clinical_scope, "medicine-detail-scope");
 
-  window.MedicineAudio.mount({
-    container: detailContent,
-    medicine,
-    language,
+      window.MedicineAudio.mount({
+        container: detailContent,
+        medicine,
+        language,
 
-    headings: {
-      use_safety: t("howToUse"),
-      precautions_interactions: t("precautions"),
-      overdose_storage: t("overdose")
+        headings: {
+          use_safety: t("howToUse"),
+          precautions_interactions: t("precautions"),
+          overdose_storage: t("overdose"),
+        },
+      });
     }
-  });
-}
 
     /* --------------------------------------------------
        Load JSON catalogue
@@ -1369,10 +1176,7 @@ nameHeader.append(
       const controller = new AbortController();
       requestController = controller;
 
-      const timeout = window.setTimeout(
-        () => controller.abort(),
-        15000
-      );
+      const timeout = window.setTimeout(() => controller.abort(), 15000);
 
       loading = true;
       catalogueFailed = false;
@@ -1384,7 +1188,7 @@ nameHeader.append(
       try {
         const response = await fetch(CATALOGUE_URL, {
           cache: "no-cache",
-          signal: controller.signal
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -1393,17 +1197,16 @@ nameHeader.append(
 
         const payload = await response.json();
 
-        const rows = Array.isArray(payload)
-          ? payload
-          : payload?.medicines;
+        const rows = Array.isArray(payload) ? payload : payload?.medicines;
 
         if (
           !Array.isArray(rows) ||
           !rows.length ||
-          !rows.every(row =>
-            row &&
-            typeof row.generic_name_en === "string" &&
-            row.generic_name_en.trim()
+          !rows.every(
+            (row) =>
+              row &&
+              typeof row.generic_name_en === "string" &&
+              row.generic_name_en.trim(),
           )
         ) {
           throw new Error("Invalid medicine JSON format.");
@@ -1412,14 +1215,10 @@ nameHeader.append(
         if (version !== loadVersion) return;
 
         medicines = [...rows].sort((a, b) =>
-          a.generic_name_en.localeCompare(
-            b.generic_name_en,
-            "en",
-            {
-              sensitivity: "base",
-              numeric: true
-            }
-          )
+          a.generic_name_en.localeCompare(b.generic_name_en, "en", {
+            sensitivity: "base",
+            numeric: true,
+          }),
         );
 
         currentPage = 1;
@@ -1430,11 +1229,7 @@ nameHeader.append(
         medicines = [];
         catalogueFailed = true;
 
-        console.error(
-          "Cannot load medicine catalogue:",
-          CATALOGUE_URL,
-          error
-        );
+        console.error("Cannot load medicine catalogue:", CATALOGUE_URL, error);
       } finally {
         window.clearTimeout(timeout);
 
@@ -1455,26 +1250,17 @@ nameHeader.append(
        Search events
     -------------------------------------------------- */
 
-    searchInput.addEventListener(
-      "input",
-      renderSearchSuggestions
-    );
+    searchInput.addEventListener("input", renderSearchSuggestions);
 
-    searchInput.addEventListener(
-      "focus",
-      renderSearchSuggestions
-    );
+    searchInput.addEventListener("focus", renderSearchSuggestions);
 
-    searchInput.addEventListener("keydown", event => {
+    searchInput.addEventListener("keydown", (event) => {
       if (event.key === "Escape" || event.key === "Tab") {
         closeSearchSuggestions();
         return;
       }
 
-      if (
-        event.key === "ArrowDown" ||
-        event.key === "ArrowUp"
-      ) {
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
         event.preventDefault();
 
         if (suggestions.hidden) {
@@ -1489,23 +1275,18 @@ nameHeader.append(
           highlightSuggestion(
             activeSuggestionIndex < 0
               ? suggestionMatches.length - 1
-              : activeSuggestionIndex - 1
+              : activeSuggestionIndex - 1,
           );
         }
 
         return;
       }
 
-      if (
-        event.key === "Enter" &&
-        !suggestions.hidden
-      ) {
+      if (event.key === "Enter" && !suggestions.hidden) {
         if (activeSuggestionIndex >= 0) {
           event.preventDefault();
 
-          chooseSuggestion(
-            suggestionMatches[activeSuggestionIndex]
-          );
+          chooseSuggestion(suggestionMatches[activeSuggestionIndex]);
         } else if (suggestionMatches.length === 1) {
           event.preventDefault();
           chooseSuggestion(suggestionMatches[0]);
@@ -1513,7 +1294,7 @@ nameHeader.append(
       }
     });
 
-    document.addEventListener("click", event => {
+    document.addEventListener("click", (event) => {
       if (!searchBox.contains(event.target)) {
         closeSearchSuggestions();
       }
@@ -1551,19 +1332,19 @@ nameHeader.append(
     $("retry")?.addEventListener("click", loadCatalogue);
 
     closeButton.addEventListener("click", () => {
-  window.MedicineAudio.stop();
+      window.MedicineAudio.stop();
 
-  activeMedicine = null;
-  renderMedicines();
+      activeMedicine = null;
+      renderMedicines();
 
-  searchInput.focus();
-  closeSearchSuggestions();
-});
+      searchInput.focus();
+      closeSearchSuggestions();
+    });
     /* --------------------------------------------------
        Shared language preference
     -------------------------------------------------- */
 
-    document.querySelectorAll("[data-language]").forEach(button => {
+    document.querySelectorAll("[data-language]").forEach((button) => {
       button.addEventListener("click", () => {
         const selected = button.dataset.language;
 
@@ -1581,7 +1362,7 @@ nameHeader.append(
       });
     });
 
-    window.addEventListener("storage", event => {
+    window.addEventListener("storage", (event) => {
       if (event.key === LANGUAGE_KEY) {
         language = readLanguage();
         renderLanguage();
@@ -1611,9 +1392,7 @@ nameHeader.append(
 
       status.hidden = !photoMessageKey;
 
-      status.textContent = photoMessageKey
-        ? t(photoMessageKey)
-        : "";
+      status.textContent = photoMessageKey ? t(photoMessageKey) : "";
     }
 
     function clearPhoto() {
@@ -1651,16 +1430,9 @@ nameHeader.append(
         photoMessageKey = "";
         renderPhotoMessage();
 
-        const allowedTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/webp"
-        ];
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
-        if (
-          !allowedTypes.includes(file.type) ||
-          file.size > 8 * 1024 * 1024
-        ) {
+        if (!allowedTypes.includes(file.type) || file.size > 8 * 1024 * 1024) {
           photoMessageKey = "invalidPhoto";
           renderPhotoMessage();
           return;
@@ -1706,11 +1478,9 @@ nameHeader.append(
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      initialisePage,
-      { once: true }
-    );
+    document.addEventListener("DOMContentLoaded", initialisePage, {
+      once: true,
+    });
   } else {
     initialisePage();
   }
