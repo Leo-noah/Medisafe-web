@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Find Medicine | MediSafe</title>
+
+  <link rel="stylesheet" href="./find-medicine.css">
+  <link rel="stylesheet" href="./top-navigation.css">
+  <link rel="stylesheet" href="./footer.css">
+
+  <script src="./medicine-audio.js" defer></script>
+  <script src="./find-medicine.js" defer></script>
+  <script src="./top-navigation.js" defer></script>
+  <script src="./footer.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+  <!-- Logo -->
+  <div class="brand">
+    <span class="brand-icon" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path
+          d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
+          fill="currentColor"
+        />
+
+        <path
+          d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
+          fill="white"
+        />
+      </svg>
+    </span>
+
+    <span class="brand-name">MediSafe</span>
+  </div>
+
+  <!-- Center menu -->
+  <nav class="top-navigation" aria-label="Main navigation">
+    <a class="top-nav-link" href="./find-medicine.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="6.5"/>
+        <path d="m16 16 4.5 4.5"/>
+      </svg>
+
+      <span>Find Medicine</span>
+    </a>
+
+    <a class="top-nav-link" href="./my-medicines.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="6" y="5" width="12" height="16" rx="2"/>
+        <path d="M9 5V3h6v2M12 10v6M9 13h6"/>
+      </svg>
+
+      <span>My Medicine</span>
+    </a>
+
+    <a class="top-nav-link" href="./news.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="3" width="16" height="18" rx="2"/>
+        <path d="M8 7h8M8 11h8M8 15h4M8 18h8"/>
+      </svg>
+
+      <span>News</span>
+    </a>
+
+    <a class="top-nav-link" href="./online-shop.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m3 9 2-6h14l2 6"/>
+        <path
+          d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"
+        />
+        <path d="M5 12v9h14v-9M10 21v-7h4v7"/>
+      </svg>
+
+      <span>Online Shop</span>
+    </a>
+  </nav>
+
+  <!-- Existing language controls -->
+  <div class="header-actions">
+  <div
+    class="language-switch"
+    role="group"
+    aria-label="Language"
+  >
+    <button
+      type="button"
+      data-language="en"
+      aria-pressed="true"
+    >
+      English
+    </button>
+
+    <button
+      type="button"
+      data-language="my"
+      aria-pressed="false"
+      lang="my"
+    >
+      မြန်မာ
+    </button>
+  </div>
+
+  <a class="header-signin" href="./login.html">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+    </svg>
+
+    <span>Sign in</span>
+  </a>
+</div>
+</header>
+
+  <main class="page-content">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="eyebrow"></p>
+
+        <h1 id="page-title" data-i18n="title"></h1>
+
+        <p class="hero-description" data-i18n="description"></p>
+
+        <div class="search-box">
+          <svg
+            width="23"
+            height="23"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <circle cx="10.5" cy="10.5" r="6.5"/>
+            <path d="m16 16 5 5"/>
+          </svg>
+
+          <label class="sr-only" for="search" data-i18n="searchLabel"></label>
+
+          <input
+            id="search"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            aria-controls="medicine-grid"
+          >
+        </div>
+
+        <p class="search-hint" data-i18n="searchHint"></p>
+      </div>
+
+      <aside class="photo-card">
+        <div class="photo-icon" aria-hidden="true">
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+          >
+            <path
+              d="M4 6h4l2-3h4l2 3h4v14H4z"
+              stroke-linejoin="round"
+            />
+            <circle cx="12" cy="12.5" r="3.5"/>
+          </svg>
+        </div>
+
+        <h2 data-i18n="photoTitle"></h2>
+        <p data-i18n="photoDescription"></p>
+
+        <label class="upload-button" for="medicine-photo">
+          <span data-i18n="choosePhoto"></span>
+
+          <input
+            id="medicine-photo"
+            class="file-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+          >
+        </label>
+
+        <p class="photo-note" data-i18n="photoNote"></p>
+      </aside>
+    </section>
+    <section
+  class="medicine-name-panel"
+  aria-labelledby="medicine-name-heading"
+>
+  <div class="medicine-name-heading">
+    <h2 id="medicine-name-heading">
+      Browse medicines · A–Z
+    </h2>
+
+    <p
+      id="medicine-name-count"
+      role="status"
+      aria-live="polite"
+    ></p>
+  </div>
+
+  <div
+    id="medicine-name-list"
+    class="medicine-name-list"
+  ></div>
+</section>
+
+    <section
+      id="photo-preview-panel"
+      class="photo-preview-panel"
+      aria-labelledby="preview-heading"
+      hidden
+    >
+      <img id="photo-preview" alt="">
+
+      <div>
+        <h2 id="preview-heading" data-i18n="previewTitle"></h2>
+        <p id="photo-filename"></p>
+        <p data-i18n="recognitionPending"></p>
+
+        <button
+          id="remove-photo"
+          class="text-button"
+          type="button"
+          data-i18n="removePhoto"
+        ></button>
+      </div>
+    </section>
+
+    <p
+      id="photo-status"
+      class="notice error"
+      role="status"
+      aria-live="polite"
+      hidden
+    ></p>
+
+    <section class="catalogue" aria-labelledby="catalogue-heading">
+      <div class="catalogue-toolbar">
+        <div>
+          <p class="eyebrow" data-i18n="catalogueLabel"></p>
+          <h2 id="catalogue-heading" data-i18n="catalogueTitle"></h2>
+
+          <p
+            id="result-count"
+            class="result-count"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </div>
+
+        <div class="category-field">
+          <label for="category" data-i18n="categoryLabel"></label>
+          <select id="category"></select>
+        </div>
+      </div>
+
+      <p id="draft-notice" class="notice" data-i18n="draftNotice" hidden></p>
+
+      <div
+        id="medicine-grid"
+        class="medicine-grid"
+        aria-busy="true"
+      ></div>
+      <section
+  id="medicine-dialog"
+  class="medicine-inline-panel"
+  aria-labelledby="detail-title"
+  hidden
+>
+  <div class="dialog-toolbar">
+    <span
+      class="detail-eyebrow"
+      data-i18n="medicineDetails"
+    >
+      MEDICINE INFORMATION
+    </span>
+
+    <button
+      id="close-dialog"
+      class="close-button"
+      type="button"
+      data-i18n="close"
+    >
+      Close
+    </button>
+  </div>
+
+  <div id="detail-content"></div>
+</section>
+
+      <div id="empty-state" class="empty-state" hidden>
+        <div aria-hidden="true">⌕</div>
+        <h3 data-i18n="emptyTitle"></h3>
+        <p data-i18n="emptyDescription"></p>
+
+        <button
+          id="clear-filters"
+          class="outline-button"
+          type="button"
+          data-i18n="clearFilters"
+        ></button>
+      </div>
+
+      <div id="load-error" class="empty-state" hidden>
+        <h3 data-i18n="loadErrorTitle"></h3>
+        <p data-i18n="loadErrorDescription"></p>
+
+        <button
+          id="retry"
+          class="outline-button"
+          type="button"
+          data-i18n="retry"
+        ></button>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>MediSafe</span>
+      <p data-i18n="footer"></p>
+    </footer>
+  </main>
+
+  <footer class="ms-footer" aria-label="MediSafe footer">
+  <div class="ms-footer-inner">
+    <div class="ms-footer-about">
+      <a class="ms-footer-brand" href="./find-medicine.html">
+        <span class="ms-footer-icon" aria-hidden="true">✚</span>
+        <span>MediSafe</span>
+      </a>
+
+      <p data-footer-i18n="description">
+        Understand your medicines. Keep your routine organised.
+      </p>
+
+      <span class="ms-footer-language" data-footer-i18n="languages">
+        Available in English and Myanmar
+      </span>
+    </div>
+
+    <nav class="ms-footer-navigation" aria-labelledby="footer-explore">
+      <h2 id="footer-explore" data-footer-i18n="explore">
+        Explore
+      </h2>
+
+      <a href="./find-medicine.html" data-footer-i18n="find">
+        Find Medicine
+      </a>
+
+      <a href="./my-medicines.html" data-footer-i18n="myMedicine">
+        My Medicine
+      </a>
+
+      <a href="./news.html" data-footer-i18n="news">
+        News
+      </a>
+
+      <a href="./online-shop.html" data-footer-i18n="shops">
+        Online Shop
+      </a>
+    </nav>
+
+    <div class="ms-footer-information">
+      <h2 data-footer-i18n="information">Before you use</h2>
+
+      <p data-footer-i18n="medicalNote">
+        Medicine information is for learning. Follow your product label
+        and advice from your doctor or pharmacist.
+      </p>
+
+      <a
+        class="ms-footer-back"
+        href="#"
+        data-footer-back
+      >
+        <span data-footer-i18n="backToTop">Back to top</span>
+        <span aria-hidden="true">↑</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="ms-footer-bottom">
+    <p>
+      © <span data-footer-year></span> MediSafe.
+      <span data-footer-i18n="rights">All rights reserved.</span>
+    </p>
+
+    <span data-footer-i18n="tagline">
+      A little clarity for everyday care.
+    </span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MediSafe</title>
+
+  <link rel="stylesheet" href="./login.css">
+  <script src="./login.js" defer></script>
+</head>
+
+<body>
+  <main class="login-page">
+
+    <section class="intro-panel" aria-labelledby="intro-title">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <path
+              d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
+              fill="currentColor"
+            />
+            <path
+              d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
+              fill="white"
+            />
+          </svg>
+        </span>
+
+        <span class="brand-name">MediSafe</span>
+      </div>
+
+      <div class="intro-content">
+        <p class="eyebrow" data-i18n="eyebrow"></p>
+        <h1 id="intro-title" data-i18n="introTitle"></h1>
+        <p class="intro-description" data-i18n="introDescription"></p>
+
+        <div class="feature-card">
+          <span class="feature-icon" aria-hidden="true">✚</span>
+          <p data-i18n="feature"></p>
+        </div>
+      </div>
+
+      <p class="intro-footer" data-i18n="footer"></p>
+    </section>
+
+    <section class="form-panel">
+      <nav class="language-switch" aria-label="Language">
+        <button
+          type="button"
+          class="language-button"
+          data-language="en"
+          aria-pressed="true"
+        >
+          English
+        </button>
+
+        <button
+          type="button"
+          class="language-button"
+          data-language="my"
+          aria-pressed="false"
+          lang="my"
+        >
+          မြန်မာ
+        </button>
+      </nav>
+
+      <div class="form-container">
+        <p class="preview-badge" data-i18n="previewBadge"></p>
+
+        <!-- Email / phone screen -->
+        <section id="entry-screen" aria-labelledby="entry-title">
+          <p class="form-eyebrow" data-i18n="welcomeLabel"></p>
+
+          <h2 id="entry-title" tabindex="-1" data-i18n="welcome"></h2>
+
+          <p class="description" data-i18n="entryDescription"></p>
+
+          <button
+            id="guest-button"
+            class="primary-button"
+            type="button"
+            data-i18n="continueGuest"
+          ></button>
+
+          <p class="helper-text" data-i18n="guestDescription"></p>
+
+          <div class="divider">
+            <span data-i18n="or"></span>
+          </div>
+
+          <form id="identifier-form" novalidate>
+            <label for="identifier" data-i18n="identifierLabel"></label>
+
+            <input
+              id="identifier"
+              name="identifier"
+              type="text"
+              autocomplete="username"
+              autocapitalize="none"
+              spellcheck="false"
+              maxlength="254"
+              aria-describedby="identifier-help"
+              required
+            >
+
+            <p
+              id="identifier-help"
+              class="helper-text"
+              data-i18n="identifierHelp"
+            ></p>
+
+            <button
+              class="secondary-button"
+              type="submit"
+              data-i18n="sendCode"
+            ></button>
+          </form>
+
+          <p class="bottom-note" data-i18n="noPassword"></p>
+        </section>
+
+        <!-- OTP screen -->
+        <section id="otp-screen" aria-labelledby="otp-title" hidden>
+          <button
+            id="back-button"
+            class="text-button"
+            type="button"
+            data-i18n="changeContact"
+          ></button>
+
+          <h2 id="otp-title" tabindex="-1" data-i18n="otpTitle"></h2>
+
+          <p class="description">
+            <span data-i18n="otpDescription"></span>
+            <strong id="contact-display"></strong>
+          </p>
+
+          <div class="demo-notice">
+            <span data-i18n="demoCode"></span>
+            <strong>123456</strong>
+          </div>
+
+          <form id="otp-form" novalidate>
+            <label for="otp" data-i18n="otpLabel"></label>
+
+            <input
+              id="otp"
+              class="otp-input"
+              name="otp"
+              type="text"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              pattern="[0-9]{6}"
+              minlength="6"
+              maxlength="6"
+              placeholder="000000"
+              required
+            >
+
+            <button
+              class="primary-button"
+              type="submit"
+              data-i18n="verifyCode"
+            ></button>
+          </form>
+
+          <button
+            id="resend-button"
+            class="text-button resend-button"
+            type="button"
+            data-i18n="resend"
+          ></button>
+        </section>
+
+        <!-- Frontend browsing preview -->
+        <section id="browse-screen" aria-labelledby="browse-title" hidden>
+          <p
+            id="browse-mode"
+            class="form-eyebrow"
+            data-i18n="guestMode"
+          ></p>
+
+          <h2 id="browse-title" tabindex="-1" data-i18n="browseTitle"></h2>
+
+          <p class="description" data-i18n="browseDescription"></p>
+
+          <label for="medicine-search" data-i18n="searchLabel"></label>
+
+          <input
+            id="medicine-search"
+            type="search"
+            autocomplete="off"
+          >
+
+          <ul id="medicine-list" class="medicine-list"></ul>
+
+          <p
+            id="no-results"
+            class="helper-text"
+            data-i18n="noResults"
+            hidden
+          ></p>
+
+          <p class="helper-text" data-i18n="sampleNotice"></p>
+
+          <button
+            id="start-over"
+            class="secondary-button"
+            type="button"
+            data-i18n="startOver"
+          ></button>
+        </section>
+
+        <p
+          id="status"
+          class="status-message"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        ></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

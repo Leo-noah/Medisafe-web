@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Online Shop | MediSafe</title>
+
+  <link rel="stylesheet" href="./online-shop.css">
+  <link rel="stylesheet" href="./top-navigation.css">
+  <link rel="stylesheet" href="./footer.css">
+
+  <script src="./online-shop.js" defer></script>
+  <script src="./top-navigation.js" defer></script>
+  <script src="./footer.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+  <!-- Logo -->
+ <div class="brand">
+    <span class="brand-icon" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path
+          d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
+          fill="currentColor"
+        />
+
+        <path
+          d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
+          fill="white"
+        />
+      </svg>
+    </span>
+
+    <span class="brand-name">MediSafe</span>
+  </div>
+
+  <!-- Center navigation -->
+  <nav class="top-navigation" aria-label="Main navigation">
+    <a class="top-nav-link" href="./find-medicine.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="6.5"/>
+        <path d="m16 16 4.5 4.5"/>
+      </svg>
+
+      <span>Find Medicine</span>
+    </a>
+
+    <a class="top-nav-link" href="./my-medicines.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="6" y="5" width="12" height="16" rx="2"/>
+        <path d="M9 5V3h6v2M12 10v6M9 13h6"/>
+      </svg>
+
+      <span>My Medicine</span>
+    </a>
+
+    <a class="top-nav-link" href="./news.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="3" width="16" height="18" rx="2"/>
+        <path d="M8 7h8M8 11h8M8 15h4M8 18h8"/>
+      </svg>
+
+      <span>News</span>
+    </a>
+
+    <a class="top-nav-link" href="./online-shop.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m3 9 2-6h14l2 6"/>
+        <path
+          d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"
+        />
+        <path d="M5 12v9h14v-9M10 21v-7h4v7"/>
+      </svg>
+
+      <span>Online Shop</span>
+    </a>
+  </nav>
+
+  <!-- Language -->
+  <div class="header-actions">
+  <div
+    class="language-switch"
+    role="group"
+    aria-label="Language"
+  >
+    <button
+      type="button"
+      data-language="en"
+      aria-pressed="true"
+    >
+      English
+    </button>
+
+    <button
+      type="button"
+      data-language="my"
+      aria-pressed="false"
+      lang="my"
+    >
+      မြန်မာ
+    </button>
+  </div>
+
+  <a class="header-signin" href="./login.html">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+    </svg>
+
+    <span>Sign in</span>
+  </a>
+</div>
+</header>
+
+  <main class="shop-page">
+    <section class="shop-hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow" data-i18n="eyebrow"></p>
+        <h1 id="page-title" data-i18n="title"></h1>
+        <p class="hero-description" data-i18n="description"></p>
+
+        <div class="hero-tags">
+          <span data-i18n="tagOne"></span>
+          <span data-i18n="tagTwo"></span>
+        </div>
+      </div>
+
+      <div class="hero-illustration" aria-hidden="true">
+        <div class="illustration-circle"></div>
+
+        <svg viewBox="0 0 160 160" fill="none">
+          <rect
+            x="31" y="65" width="98" height="70"
+            rx="9" fill="#ffffff"
+          />
+
+          <path
+            d="M24 65 38 28h84l14 37"
+            fill="#8ce2bd"
+          />
+
+          <path
+            d="M24 65v8a14 14 0 0 0 28 0
+               14 14 0 0 0 28 0
+               14 14 0 0 0 28 0
+               14 14 0 0 0 28 0v-8"
+            fill="#c8f4df"
+            stroke="#146c54"
+            stroke-width="3"
+          />
+
+          <rect
+            x="67" y="95" width="27" height="40"
+            rx="4" fill="#146c54"
+          />
+
+          <path
+            d="M75 37h11v9h9v11h-9v9H75v-9h-9V46h9z"
+            fill="#146c54"
+          />
+        </svg>
+      </div>
+    </section>
+
+    <section class="shop-directory" aria-labelledby="directory-title">
+      <div class="directory-heading">
+        <div>
+          <p class="eyebrow" data-i18n="directoryLabel"></p>
+          <h2 id="directory-title" data-i18n="directoryTitle"></h2>
+        </div>
+
+        <span
+          id="result-count"
+          class="result-count"
+          role="status"
+          aria-live="polite"
+        ></span>
+      </div>
+
+      <div class="directory-controls">
+        <div class="shop-search">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <circle cx="10.5" cy="10.5" r="6.5"/>
+            <path d="m16 16 5 5"/>
+          </svg>
+
+          <label class="sr-only" for="shop-search" data-i18n="search"></label>
+
+          <input
+            id="shop-search"
+            type="search"
+            autocomplete="off"
+            aria-controls="shop-grid"
+          >
+        </div>
+
+        <div class="filter-field">
+          <label class="sr-only" for="shop-type" data-i18n="filter"></label>
+
+          <select id="shop-type">
+            <option value="all" data-i18n="allShops"></option>
+            <option value="catalogue" data-i18n="catalogue"></option>
+            <option value="contact" data-i18n="contactFirst"></option>
+          </select>
+        </div>
+
+        <button
+          id="favourites-filter"
+          class="favourites-filter"
+          type="button"
+          aria-pressed="false"
+        >
+          <span aria-hidden="true">♡</span>
+          <span data-i18n="savedShops"></span>
+        </button>
+      </div>
+
+      <p class="directory-notice" data-i18n="notice"></p>
+
+      <p
+        id="storage-status"
+        class="storage-status"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></p>
+
+      <div id="shop-grid" class="shop-grid"></div>
+
+      <div id="empty-state" class="empty-state" hidden>
+        <span aria-hidden="true">⌕</span>
+        <h3 data-i18n="emptyTitle"></h3>
+        <p data-i18n="emptyDescription"></p>
+
+        <button
+          id="reset-filters"
+          type="button"
+          class="reset-button"
+          data-i18n="reset"
+        ></button>
+      </div>
+    </section>
+
+    <footer class="ms-footer" aria-label="MediSafe footer">
+  <div class="ms-footer-inner">
+    <div class="ms-footer-about">
+      <a class="ms-footer-brand" href="./find-medicine.html">
+        <span class="ms-footer-icon" aria-hidden="true">✚</span>
+        <span>MediSafe</span>
+      </a>
+
+      <p data-footer-i18n="description">
+        Understand your medicines. Keep your routine organised.
+      </p>
+
+      <span class="ms-footer-language" data-footer-i18n="languages">
+        Available in English and Myanmar
+      </span>
+    </div>
+
+    <nav class="ms-footer-navigation" aria-labelledby="footer-explore">
+      <h2 id="footer-explore" data-footer-i18n="explore">
+        Explore
+      </h2>
+
+      <a href="./find-medicine.html" data-footer-i18n="find">
+        Find Medicine
+      </a>
+
+      <a href="./my-medicines.html" data-footer-i18n="myMedicine">
+        My Medicine
+      </a>
+
+      <a href="./news.html" data-footer-i18n="news">
+        News
+      </a>
+
+      <a href="./online-shop.html" data-footer-i18n="shops">
+        Online Shop
+      </a>
+    </nav>
+
+    <div class="ms-footer-information">
+      <h2 data-footer-i18n="information">Before you use</h2>
+
+      <p data-footer-i18n="medicalNote">
+        Medicine information is for learning. Follow your product label
+        and advice from your doctor or pharmacist.
+      </p>
+
+      <a
+        class="ms-footer-back"
+        href="#"
+        data-footer-back
+      >
+        <span data-footer-i18n="backToTop">Back to top</span>
+        <span aria-hidden="true">↑</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="ms-footer-bottom">
+    <p>
+      © <span data-footer-year></span> MediSafe.
+      <span data-footer-i18n="rights">All rights reserved.</span>
+    </p>
+
+    <span data-footer-i18n="tagline">
+      A little clarity for everyday care.
+    </span>
+  </div>
+</footer>
+  </main>
+</body>
+</html>

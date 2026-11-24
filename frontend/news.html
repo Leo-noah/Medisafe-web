@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>News | MediSafe</title>
+
+  <link rel="stylesheet" href="./news.css">
+  <link rel="stylesheet" href="./top-navigation.css">
+  <link rel="stylesheet" href="./footer.css">
+
+  <script src="./news.js" defer></script>
+  <script src="./top-navigation.js" defer></script>
+  <script src="./footer.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path
+            d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
+            fill="currentColor"
+          />
+
+          <path
+            d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
+            fill="white"
+          />
+        </svg>
+      </span>
+
+      <span class="brand-name">MediSafe</span>
+    </div>
+
+    <nav class="top-navigation" aria-label="Main navigation">
+      <a class="top-nav-link" href="./find-medicine.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5"/>
+          <path d="m16 16 4.5 4.5"/>
+        </svg>
+
+        <span>Find Medicine</span>
+      </a>
+
+      <a class="top-nav-link" href="./my-medicines.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="6" y="5" width="12" height="16" rx="2"/>
+          <path d="M9 5V3h6v2M12 10v6M9 13h6"/>
+        </svg>
+
+        <span>My Medicine</span>
+      </a>
+
+      <a
+        class="top-nav-link is-active"
+        href="./news.html"
+        aria-current="page"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="3" width="16" height="18" rx="2"/>
+          <path d="M8 7h8M8 11h8M8 15h4M8 18h8"/>
+        </svg>
+
+        <span>News</span>
+      </a>
+
+      <a class="top-nav-link" href="./online-shop.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m3 9 2-6h14l2 6"/>
+          <path
+            d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"
+          />
+          <path d="M5 12v9h14v-9M10 21v-7h4v7"/>
+        </svg>
+
+        <span>Online Shop</span>
+      </a>
+    </nav>
+
+    <div class="header-actions">
+  <div
+    class="language-switch"
+    role="group"
+    aria-label="Language"
+  >
+    <button
+      type="button"
+      data-language="en"
+      aria-pressed="true"
+    >
+      English
+    </button>
+
+    <button
+      type="button"
+      data-language="my"
+      aria-pressed="false"
+      lang="my"
+    >
+      မြန်မာ
+    </button>
+  </div>
+
+  <a class="header-signin" href="./login.html">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+    </svg>
+
+    <span>Sign in</span>
+  </a>
+</div>
+  </header>
+
+  <main class="news-page">
+    <section class="news-hero" aria-labelledby="news-title">
+      <div class="news-hero-copy">
+        <p class="news-eyebrow" data-i18n="eyebrow">
+          THE MEDISAFE READING ROOM
+        </p>
+
+        <h1 id="news-title" data-i18n="title">
+          A little knowledge.<br>A healthier perspective.
+        </h1>
+
+        <p class="news-hero-description" data-i18n="description">
+          Explore medicine updates, pharmacy stories and
+          research from original sources.
+        </p>
+
+        <div class="news-hero-tags">
+          <span data-i18n="tagOne">Medicine updates</span>
+          <span data-i18n="tagTwo">Research discoveries</span>
+          <span data-i18n="tagThree">Pharmacy insights</span>
+        </div>
+      </div>
+
+      <div class="news-hero-art" aria-hidden="true">
+        <div class="news-paper">
+          <span class="news-paper-label">MEDISAFE JOURNAL</span>
+
+          <div class="news-paper-heading"></div>
+          <div class="news-paper-heading short"></div>
+
+          <div class="news-paper-feature">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+
+          <div class="news-paper-line"></div>
+          <div class="news-paper-line"></div>
+          <div class="news-paper-line short"></div>
+        </div>
+
+        <span class="news-art-spark">✦</span>
+      </div>
+    </section>
+
+    <section class="news-directory" aria-labelledby="directory-title">
+      <div class="news-section-heading">
+        <div>
+          <p class="news-eyebrow" data-i18n="directoryLabel">
+            EXPLORE & LEARN
+          </p>
+
+          <h2 id="directory-title" data-i18n="directoryTitle">
+            News worth reading
+          </h2>
+        </div>
+
+        <p
+          id="news-count"
+          class="news-count"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </div>
+
+      <div class="news-controls">
+        <div
+          class="news-filters"
+          role="group"
+          aria-label="News categories"
+        >
+          <button
+            class="news-filter"
+            type="button"
+            data-category="all"
+            aria-pressed="true"
+            data-i18n="all"
+          >
+            All
+          </button>
+
+          <button
+            class="news-filter"
+            type="button"
+            data-category="medicine"
+            aria-pressed="false"
+            data-i18n="medicine"
+          >
+            Medicine
+          </button>
+
+          <button
+            class="news-filter"
+            type="button"
+            data-category="pharmacy"
+            aria-pressed="false"
+            data-i18n="pharmacy"
+          >
+            Pharmacy
+          </button>
+
+          <button
+            class="news-filter"
+            type="button"
+            data-category="research"
+            aria-pressed="false"
+            data-i18n="research"
+          >
+            Research
+          </button>
+
+          <button
+            class="news-filter"
+            type="button"
+            data-category="other"
+            aria-pressed="false"
+            data-i18n="other"
+          >
+            Other Health News
+          </button>
+        </div>
+
+        <div class="news-search">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <circle cx="10.5" cy="10.5" r="6.5"/>
+            <path d="m16 16 4.5 4.5"/>
+          </svg>
+
+          <label
+            class="news-sr-only"
+            for="news-search"
+            data-i18n="search"
+          >
+            Search news
+          </label>
+
+          <input
+            id="news-search"
+            type="search"
+            placeholder="Search news or source..."
+            autocomplete="off"
+            aria-controls="news-grid"
+          >
+        </div>
+      </div>
+
+      <p class="news-directory-note" data-i18n="directoryNote">
+        Read a short introduction here, then open the original
+        website for the full story. External articles may be in English.
+      </p>
+
+      <div id="news-grid" class="news-grid"></div>
+
+      <div id="news-empty" class="news-empty" hidden>
+        <span aria-hidden="true">⌕</span>
+
+        <h3 data-i18n="emptyTitle">No matching news</h3>
+
+        <p data-i18n="emptyDescription">
+          Try another keyword or category.
+        </p>
+
+        <button
+          id="news-reset"
+          class="news-reset"
+          type="button"
+          data-i18n="reset"
+        >
+          Clear filters
+        </button>
+      </div>
+
+      <noscript>
+        Please enable JavaScript to view the news directory.
+      </noscript>
+    </section>
+
+    <footer class="ms-footer" aria-label="MediSafe footer">
+  <div class="ms-footer-inner">
+    <div class="ms-footer-about">
+      <a class="ms-footer-brand" href="./find-medicine.html">
+        <span class="ms-footer-icon" aria-hidden="true">✚</span>
+        <span>MediSafe</span>
+      </a>
+
+      <p data-footer-i18n="description">
+        Understand your medicines. Keep your routine organised.
+      </p>
+
+      <span class="ms-footer-language" data-footer-i18n="languages">
+        Available in English and Myanmar
+      </span>
+    </div>
+
+    <nav class="ms-footer-navigation" aria-labelledby="footer-explore">
+      <h2 id="footer-explore" data-footer-i18n="explore">
+        Explore
+      </h2>
+
+      <a href="./find-medicine.html" data-footer-i18n="find">
+        Find Medicine
+      </a>
+
+      <a href="./my-medicines.html" data-footer-i18n="myMedicine">
+        My Medicine
+      </a>
+
+      <a href="./news.html" data-footer-i18n="news">
+        News
+      </a>
+
+      <a href="./online-shop.html" data-footer-i18n="shops">
+        Online Shop
+      </a>
+    </nav>
+
+    <div class="ms-footer-information">
+      <h2 data-footer-i18n="information">Before you use</h2>
+
+      <p data-footer-i18n="medicalNote">
+        Medicine information is for learning. Follow your product label
+        and advice from your doctor or pharmacist.
+      </p>
+
+      <a
+        class="ms-footer-back"
+        href="#"
+        data-footer-back
+      >
+        <span data-footer-i18n="backToTop">Back to top</span>
+        <span aria-hidden="true">↑</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="ms-footer-bottom">
+    <p>
+      © <span data-footer-year></span> MediSafe.
+      <span data-footer-i18n="rights">All rights reserved.</span>
+    </p>
+
+    <span data-footer-i18n="tagline">
+      A little clarity for everyday care.
+    </span>
+  </div>
+</footer>
+  </main>
+</body>
+</html>
