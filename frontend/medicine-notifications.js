@@ -256,13 +256,12 @@
     const text = TEXT[language()];
 
     try {
-      await registration.showNotification(text.testTitle, {
-        body: text.testBody,
-        tag: "medisafe-notification-test",
-        renotify: true,
-        lang: language(),
-        dir: "ltr"
-      });
+           await registration.showNotification(
+        "MediSafe laptop test " + new Date().toLocaleTimeString(),
+        {
+          body: "Notification test from the website button."
+        }
+      );
 
       showMessage("sent");
     } catch (error) {
