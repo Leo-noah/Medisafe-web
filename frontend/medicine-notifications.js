@@ -259,6 +259,7 @@
       await registration.showNotification(text.testTitle, {
         body: text.testBody,
         tag: "medisafe-notification-test",
+        renotify: true,
         lang: language(),
         dir: "ltr"
       });
