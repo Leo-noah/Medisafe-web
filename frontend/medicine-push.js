@@ -2,7 +2,7 @@
   "use strict";
 
   const API_BASE =
-  "https://divisions-obviously-february-portions.trycloudflare.com";
+    "https://obliged-surname-oxford.ngrok-free.dev";
 
   const TOKEN_KEY = "medisafe-push-device-token-v1";
 
@@ -61,7 +61,9 @@
   }
 
   async function request(path, method = "GET", body) {
-    const headers = {};
+    const headers = {
+  "ngrok-skip-browser-warning": "1"
+};
 
     if (deviceToken) {
       headers.Authorization = `Bearer ${deviceToken}`;
