@@ -1,0 +1,1122 @@
+.mc-calendar,
+.mc-calendar * {
+  box-sizing: border-box;
+}
+
+.mc-calendar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 32px;
+
+  margin: 26px 0 32px;
+  padding: 28px;
+
+  border: 1px solid #d6e7dd;
+  border-radius: 22px;
+  background: #ffffff;
+  color: #23483b;
+}
+
+.mc-calendar-panel,
+.mc-schedule-panel {
+  min-width: 0;
+}
+
+.mc-heading,
+.mc-month-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mc-heading h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.7;
+}
+
+.mc-calendar button {
+  font: inherit;
+  cursor: pointer;
+}
+
+#mc-today {
+  min-height: 42px;
+  padding: 7px 15px;
+
+  border: 1px solid #cce5d7;
+  border-radius: 10px;
+  background: #eef8f2;
+  color: #146c54;
+}
+
+.mc-month-navigation {
+  margin: 22px 0 16px;
+}
+
+.mc-month-navigation h3 {
+  margin: 0;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.mc-month-navigation button {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid #d8e7df;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #146c54;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.mc-weekdays,
+.mc-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.mc-weekdays {
+  margin-bottom: 8px;
+}
+
+.mc-weekdays span {
+  padding: 7px 0;
+  color: #71877b;
+  font-size: 13px;
+  text-align: center;
+}
+
+.mc-calendar .mc-day {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px 2px 14px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #294d3e;
+
+  font-size: 15px;
+}
+
+.mc-calendar .mc-day:hover,
+.mc-month-navigation button:hover,
+#mc-today:hover {
+  background: #e7f5ed;
+}
+
+.mc-calendar .mc-day.is-outside {
+  color: #9baaa2;
+}
+
+.mc-calendar .mc-day.is-today {
+  border-color: #5fb38e;
+  font-weight: 750;
+}
+
+.mc-calendar .mc-day[aria-pressed="true"] {
+  border-color: #146c54;
+  background: #146c54;
+  color: #ffffff;
+  font-weight: 750;
+}
+
+.mc-day.has-schedule::after {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #20a875;
+  content: "";
+}
+
+.mc-day.has-schedule[aria-pressed="true"]::after {
+  background: #ffffff;
+}
+
+.mc-legend {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin: 18px 0 0;
+  color: #708579;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.mc-legend > span:first-child {
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #20a875;
+}
+
+.mc-schedule-panel {
+  padding: 22px;
+  border: 1px solid #deece4;
+  border-radius: 16px;
+  background: #f5faf7;
+}
+
+.mc-eyebrow {
+  margin: 0 0 10px;
+  color: #147057;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#mc-selected-date {
+  margin: 0 0 22px;
+  font-size: 21px;
+  line-height: 1.9;
+}
+
+.mc-schedule {
+  display: grid;
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.mc-dose {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 14px;
+
+  padding: 15px;
+  border: 1px solid #dce9e1;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.mc-time {
+  color: #146c54;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.mc-dose-name {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.mc-dose-amount {
+  margin: 5px 0;
+  color: #687e72;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.mc-dose-state {
+  color: #718477;
+  font-size: 12px;
+}
+
+.mc-dose-state.is-recorded {
+  color: #08744d;
+}
+
+.mc-empty {
+  margin: 0;
+  padding: 25px 12px;
+  color: #718477;
+  line-height: 2;
+}
+
+.mc-calendar button:focus-visible {
+  outline: 3px solid #67c79f;
+  outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+  .mc-calendar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mc-calendar {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .mc-heading h2 {
+    font-size: 19px;
+  }
+
+  .mc-weekdays,
+  .mc-days {
+    gap: 2px;
+  }
+
+  .mc-calendar .mc-day {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .mc-weekdays span {
+    font-size: 12px;
+  }
+
+  .mc-schedule-panel {
+    padding: 16px;
+  }
+}
+/* Full-width calendar, with the selected day's schedule below */
+
+.mc-calendar {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  padding: 30px;
+}
+
+.mc-calendar-panel,
+.mc-schedule-panel {
+  width: 100%;
+}
+
+/* Larger calendar heading */
+
+.mc-heading h2 {
+  font-size: 25px;
+}
+
+.mc-month-navigation {
+  margin: 26px 0 20px;
+}
+
+.mc-month-navigation h3 {
+  font-size: 22px;
+}
+
+/* Spacious dates */
+
+.mc-weekdays,
+.mc-days {
+  gap: 8px;
+}
+
+.mc-weekdays span {
+  padding: 10px 0;
+  font-size: 15px;
+}
+
+.mc-calendar .mc-day {
+  min-height: 76px;
+  padding: 14px 6px 20px;
+  border-radius: 12px;
+  font-size: 18px;
+}
+
+.mc-day.has-schedule::after {
+  bottom: 12px;
+  width: 6px;
+  height: 6px;
+}
+
+.mc-legend {
+  margin-top: 22px;
+  font-size: 14px;
+}
+
+/* Selected day's schedule under the calendar */
+
+.mc-schedule-panel {
+  padding: 24px;
+}
+
+#mc-selected-date {
+  margin-bottom: 18px;
+  font-size: 22px;
+}
+
+.mc-schedule {
+  max-height: 360px;
+}
+
+.mc-empty {
+  padding: 14px 0;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .mc-calendar {
+    gap: 22px;
+    padding: 16px;
+  }
+
+  .mc-heading h2 {
+    font-size: 19px;
+  }
+
+  .mc-month-navigation h3 {
+    font-size: 18px;
+  }
+
+  .mc-weekdays,
+  .mc-days {
+    gap: 3px;
+  }
+
+  .mc-weekdays span {
+    font-size: 12px;
+  }
+
+  .mc-calendar .mc-day {
+    min-height: 48px;
+    padding: 8px 2px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+
+  .mc-day.has-schedule::after {
+    bottom: 6px;
+    width: 5px;
+    height: 5px;
+  }
+
+  .mc-schedule-panel {
+    padding: 18px;
+  }
+
+  #mc-selected-date {
+    font-size: 19px;
+  }
+}
+/* Full weekday names */
+
+.mc-weekdays span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px 4px;
+
+  color: #557266;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.9;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Subtle rectangular date cells */
+
+.mc-calendar .mc-day {
+  min-height: 78px;
+
+  border: 1px solid #e1ece6;
+  border-radius: 6px;
+  background: #fbfdfc;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.mc-calendar .mc-day:hover {
+  border-color: #b5d7c5;
+  background: #edf7f1;
+}
+
+/* Dates outside the displayed month */
+
+.mc-calendar .mc-day.is-outside {
+  border-color: #edf2ef;
+  background: #f8faf9;
+  color: #9baaa2;
+}
+
+/* Today */
+
+.mc-calendar .mc-day.is-today {
+  border-color: #67b894;
+  background: #f0faf4;
+  color: #146c54;
+  font-weight: 750;
+}
+
+/* Selected date */
+
+.mc-calendar .mc-day[aria-pressed="true"] {
+  border-color: #146c54;
+  background: #146c54;
+  color: #ffffff;
+}
+
+/* Keep full names readable on small screens */
+
+@media (max-width: 600px) {
+  .mc-weekdays span {
+    min-height: 58px;
+    padding: 6px 2px;
+    font-size: 10px;
+    line-height: 1.7;
+  }
+
+  .mc-calendar .mc-day {
+    min-height: 48px;
+    border-radius: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-calendar .mc-day {
+    transition: none;
+  }
+}
+/* Calendar date with medicine illustrations */
+
+.mc-calendar .mc-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 100px;
+  padding: 12px 4px;
+}
+
+/* Replace the old schedule dot */
+
+.mc-calendar .mc-day.has-schedule::after {
+  display: none;
+}
+
+.mc-date-number {
+  display: block;
+  line-height: 1.4;
+}
+
+.mc-pills,
+.mc-pill-spacer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* Blue and white capsule */
+
+.mc-pill {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+
+  width: 13px;
+  height: 25px;
+
+  border: 1px solid rgb(28 107 130 / 20%);
+  border-radius: 20px;
+
+  background: linear-gradient(
+    to bottom,
+    #6adcf2 0%,
+    #11a8d0 48%,
+    #d8e3e8 49%,
+    #ffffff 53%,
+    #e5edef 100%
+  );
+
+  box-shadow:
+    inset 2px 0 3px rgb(255 255 255 / 65%),
+    inset -2px 0 3px rgb(18 80 105 / 12%),
+    1px 3px 4px rgb(20 76 59 / 14%);
+
+  transform: rotate(25deg);
+}
+
+/* Small shine */
+
+.mc-pill::before {
+  position: absolute;
+  top: 4px;
+  left: 3px;
+
+  width: 3px;
+  height: 6px;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 65%);
+
+  content: "";
+}
+
+/* More than three records: capsule pile */
+
+.mc-pills.is-pile {
+  position: relative;
+  display: block;
+
+  width: 66px;
+  height: 28px;
+}
+
+.mc-pills.is-pile .mc-pill {
+  position: absolute;
+  width: 12px;
+  height: 23px;
+}
+
+.mc-pills.is-pile .mc-pill:nth-child(1) {
+  top: 0;
+  left: 8px;
+  transform: rotate(-45deg);
+}
+
+.mc-pills.is-pile .mc-pill:nth-child(2) {
+  top: 0;
+  left: 24px;
+  transform: rotate(45deg);
+}
+
+.mc-pills.is-pile .mc-pill:nth-child(3) {
+  top: 9px;
+  left: 3px;
+  transform: rotate(65deg);
+}
+
+.mc-pills.is-pile .mc-pill:nth-child(4) {
+  top: 8px;
+  left: 18px;
+  transform: rotate(-20deg);
+}
+
+.mc-pills.is-pile .mc-pill:nth-child(5) {
+  top: 9px;
+  left: 32px;
+  transform: rotate(65deg);
+}
+
+/* Yellow/blue capsules inside the pile */
+
+.mc-pills.is-pile .mc-pill:nth-child(even) {
+  background: linear-gradient(
+    to bottom,
+    #7ba8f0 0%,
+    #245db5 48%,
+    #f7cf54 49%,
+    #ffe591 100%
+  );
+}
+
+.mc-pill-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+
+  display: grid;
+  place-items: center;
+
+  min-width: 23px;
+  height: 23px;
+  padding: 0 4px;
+
+  border: 1px solid #c9e4d6;
+  border-radius: 7px;
+  background: #e4f3ea;
+  color: #126349;
+
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1;
+}
+
+/* Maintain contrast on the selected date */
+
+.mc-day[aria-pressed="true"] .mc-pill-count {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #146c54;
+}
+
+/* Legend */
+
+.mc-legend > span:first-child {
+  width: 10px;
+  height: 19px;
+  flex-basis: 10px;
+
+  border: 1px solid #b4d4da;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    to bottom,
+    #19afd2 0%,
+    #19afd2 49%,
+    #ffffff 50%,
+    #e7eef0 100%
+  );
+
+  transform: rotate(25deg);
+}
+
+/* Smaller illustrations for phones */
+
+@media (max-width: 600px) {
+  .mc-calendar .mc-day {
+    min-height: 86px;
+    gap: 7px;
+    padding: 9px 1px;
+  }
+
+  .mc-pills,
+  .mc-pill-spacer {
+    gap: 3px;
+    height: 23px;
+  }
+
+  .mc-pill {
+    width: 9px;
+    height: 19px;
+  }
+
+  .mc-pill::before {
+    left: 2px;
+    width: 2px;
+    height: 4px;
+  }
+
+  .mc-pills.is-pile {
+    width: 36px;
+    height: 27px;
+  }
+
+  .mc-pills.is-pile .mc-pill {
+    width: 8px;
+    height: 17px;
+  }
+
+  .mc-pills.is-pile .mc-pill:nth-child(1) {
+    left: 4px;
+  }
+
+  .mc-pills.is-pile .mc-pill:nth-child(2) {
+    left: 13px;
+  }
+
+  .mc-pills.is-pile .mc-pill:nth-child(3) {
+    top: 8px;
+    left: 1px;
+  }
+
+  .mc-pills.is-pile .mc-pill:nth-child(4) {
+    top: 8px;
+    left: 10px;
+  }
+
+  .mc-pills.is-pile .mc-pill:nth-child(5) {
+    top: 8px;
+    left: 19px;
+  }
+
+  .mc-pill-count {
+    top: -5px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 2px;
+    font-size: 9px;
+  }
+}
+/* Remove the old number badge */
+
+.mc-calendar .mc-pill-count {
+  display: none;
+}
+
+/* Centre the pill pile now that the badge is removed */
+
+.mc-calendar .mc-pills.is-pile {
+  width: 48px;
+}
+
+/* Make room for today's remaining-medicine message */
+
+.mc-calendar .mc-day {
+  min-height: 138px;
+  height: 100%;
+  padding: 12px 5px;
+}
+
+.mc-remaining-label {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  margin-top: 4px;
+
+  color: #386957;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.9;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.mc-day[aria-pressed="true"] .mc-remaining-label {
+  color: #ffffff;
+}
+
+@media (max-width: 600px) {
+  .mc-calendar .mc-pills.is-pile {
+    width: 30px;
+  }
+
+  .mc-calendar .mc-day {
+    min-height: 150px;
+    padding: 9px 2px;
+    gap: 6px;
+  }
+
+  .mc-remaining-label {
+    font-size: 10px;
+    line-height: 1.8;
+  }
+}
+/* Compact calendar with a blurred medicine background */
+
+.mc-calendar {
+  position: relative;
+  isolation: isolate;
+
+  width: 100%;
+  max-width: 1000px;
+  margin: 26px auto 32px;
+  padding: 24px;
+  gap: 20px;
+
+  border: 1px solid #d2e5d9;
+  border-radius: 20px;
+  background: #f1f8f4;
+
+  box-shadow: 0 8px 28px rgb(20 76 59 / 5%);
+}
+
+/* Blur the background image only */
+
+.mc-calendar::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      rgb(242 250 246 / 88%),
+      rgb(235 247 240 / 92%)
+    ),
+    url("./images/calendar-bg.webp") center / cover no-repeat;
+
+  filter: blur(15px);
+  clip-path: inset(0 round 20px);
+  pointer-events: none;
+  content: "";
+}
+
+/* Smaller header */
+
+.mc-heading h2 {
+  font-size: 22px;
+}
+
+#mc-today {
+  min-height: 40px;
+  padding: 6px 13px;
+  background: #ffffff;
+}
+
+.mc-month-navigation {
+  margin: 16px 0 12px;
+}
+
+.mc-month-navigation h3 {
+  font-size: 20px;
+}
+
+.mc-month-navigation button {
+  flex-basis: 38px;
+  width: 38px;
+  height: 38px;
+}
+
+/* Compact date grid */
+
+.mc-weekdays,
+.mc-days {
+  gap: 6px;
+}
+
+.mc-weekdays span {
+  min-height: 40px;
+  padding: 6px 2px;
+  font-size: 13px;
+  color: #365d4c;
+}
+
+.mc-calendar .mc-day {
+  min-height: 76px;
+  padding: 8px 3px;
+  gap: 5px;
+
+  border: 1px solid #dbe8e0;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 88%);
+
+  font-size: 16px;
+}
+
+/* Only today's message needs extra height */
+
+.mc-calendar .mc-day.has-remaining-label {
+  min-height: 110px;
+}
+
+.mc-calendar .mc-day.is-outside {
+  background: rgb(245 249 247 / 80%);
+  color: #8b9e93;
+}
+
+.mc-calendar .mc-day:hover {
+  border-color: #a8d0ba;
+  background: #e9f6ee;
+}
+
+.mc-calendar .mc-day.is-today {
+  border-color: #59ac85;
+  background: #eef9f2;
+  color: #146c54;
+}
+
+.mc-calendar .mc-day[aria-pressed="true"] {
+  border-color: #146c54;
+  background: #146c54;
+  color: #ffffff;
+}
+
+.mc-remaining-label {
+  max-width: 135px;
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* Smaller legend */
+
+.mc-legend {
+  margin-top: 16px;
+  font-size: 12px;
+  line-height: 1.9;
+}
+
+/* Compact schedule beneath the calendar */
+
+.mc-schedule-panel {
+  padding: 18px;
+  border-color: #d3e6db;
+  background: rgb(255 255 255 / 90%);
+}
+
+.mc-eyebrow {
+  margin-bottom: 6px;
+}
+
+#mc-selected-date {
+  margin-bottom: 14px;
+  font-size: 20px;
+}
+
+.mc-schedule {
+  gap: 9px;
+  max-height: 240px;
+}
+
+.mc-dose {
+  gap: 12px;
+  padding: 12px;
+}
+
+.mc-dose-amount {
+  margin: 3px 0;
+}
+
+.mc-empty {
+  padding: 10px 0;
+}
+
+/* Phones */
+
+@media (max-width: 600px) {
+  .mc-calendar {
+    padding: 12px;
+    gap: 16px;
+    border-radius: 16px;
+  }
+
+  .mc-heading h2 {
+    font-size: 18px;
+  }
+
+  .mc-month-navigation h3 {
+    font-size: 17px;
+  }
+
+  .mc-weekdays,
+  .mc-days {
+    gap: 3px;
+  }
+
+  .mc-weekdays span {
+    min-height: 48px;
+    font-size: 10px;
+    overflow-wrap: anywhere;
+  }
+
+  .mc-calendar .mc-day {
+    min-height: 64px;
+    font-size: 14px;
+  }
+
+  .mc-calendar .mc-day.has-remaining-label {
+    min-height: 125px;
+  }
+
+  .mc-remaining-label {
+    font-size: 10px;
+  }
+
+  .mc-schedule-panel {
+    padding: 14px;
+  }
+
+  #mc-selected-date {
+    font-size: 18px;
+  }
+}
+/* Restore original full width */
+
+.mc-calendar {
+  width: 100%;
+  max-width: none;
+  margin: 26px 0 32px;
+  padding: 20px 28px;
+  gap: 18px;
+}
+
+/* Reduce header spacing */
+
+.mc-month-navigation {
+  margin: 12px 0 10px;
+}
+
+.mc-weekdays span {
+  min-height: 34px;
+  padding: 4px 2px;
+}
+
+/* Reduce date-cell height */
+
+.mc-calendar .mc-day {
+  min-height: 64px;
+  height: 100%;
+  padding: 6px 4px;
+  gap: 3px;
+}
+
+/* Allow enough room for today's remaining-medicine text */
+
+.mc-calendar .mc-day.has-remaining-label {
+  min-height: 90px;
+}
+
+.mc-remaining-label {
+  max-width: 180px;
+  margin-top: 1px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.mc-legend {
+  margin: 12px 0 0;
+}
+
+/* Compact schedule beneath the calendar */
+
+.mc-schedule-panel {
+  padding: 16px 20px;
+}
+
+#mc-selected-date {
+  margin-bottom: 12px;
+}
+
+.mc-schedule {
+  max-height: 200px;
+  gap: 8px;
+}
+
+.mc-dose {
+  padding: 10px 12px;
+}
+
+.mc-empty {
+  padding: 8px 0;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .mc-calendar {
+    padding: 14px 10px;
+    gap: 14px;
+  }
+
+  .mc-weekdays span {
+    min-height: 46px;
+  }
+
+  .mc-calendar .mc-day {
+    min-height: 60px;
+    padding: 5px 2px;
+  }
+
+  .mc-calendar .mc-day.has-remaining-label {
+    min-height: 120px;
+  }
+
+  .mc-remaining-label {
+    font-size: 10px;
+  }
+
+  .mc-schedule-panel {
+    padding: 14px;
+  }
+}

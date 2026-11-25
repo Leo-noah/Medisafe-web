@@ -625,3 +625,100 @@ html[lang="my"] .eyebrow {
     flex-direction: column;
   }
 }
+/* Medicine name autocomplete */
+
+.mm-name-search {
+  position: relative;
+}
+
+.mm-name-search > input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mm-name-options {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  padding: 6px;
+  border: 1px solid #cce3d6;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgb(16 79 64 / 14%);
+}
+
+.mm-name-options[hidden] {
+  display: none;
+}
+
+.mm-name-options .mm-name-option {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 12px;
+
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #195c46;
+
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.9;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.mm-name-options .mm-name-option:hover,
+.mm-name-options .mm-name-option[aria-selected="true"] {
+  background: #e6f5ed;
+  color: #096448;
+}
+
+/* Dose unit buttons */
+
+.mm-dose-units {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mm-dose-units button {
+  min-width: 58px;
+  min-height: 42px;
+  padding: 7px 13px;
+
+  border: 1px solid #d2e5d9;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #597367;
+
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.8;
+  cursor: pointer;
+}
+
+.mm-dose-units button:hover {
+  background: #eef8f2;
+}
+
+.mm-dose-units button[aria-pressed="true"] {
+  border-color: #146c54;
+  background: #146c54;
+  color: #ffffff;
+}
+
+.mm-dose-units button:focus-visible {
+  outline: 3px solid #71c9a6;
+  outline-offset: 3px;
+}

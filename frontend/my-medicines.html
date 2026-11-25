@@ -12,10 +12,15 @@
   <link rel="stylesheet" href="./my-medicines.css">
   <link rel="stylesheet" href="./top-navigation.css">
   <link rel="stylesheet" href="./footer.css">
+  <link rel="stylesheet" href="./medicine-calendar.css">
+  <link rel="stylesheet" href="./medicine-notifications.css">
 
   <script src="./my-medicines.js" defer></script>
   <script src="./top-navigation.js" defer></script>
   <script src="./footer.js" defer></script>
+  <script src="./medicine-calendar.js" defer></script>
+  <script src="./my-medicine-fields.js" defer></script>
+  <script src="./medicine-notifications.js" defer></script>
 </head>
 
 <body>
@@ -141,6 +146,74 @@
     </section>
 
     <p class="storage-notice" data-i18n="storageNotice"></p>
+    <section
+  class="mn-notifications"
+  aria-labelledby="mn-title"
+>
+  <div>
+    <h2 id="mn-title">Medicine notifications</h2>
+
+    <p id="mn-description">
+      Allow notifications, then send a test to this device.
+    </p>
+  </div>
+
+  <div class="mn-actions">
+    <button id="mn-allow" type="button">
+      Allow notifications
+    </button>
+
+    <button id="mn-test" type="button" disabled>
+      Test notification
+    </button>
+  </div>
+
+  <p
+    id="mn-status"
+    class="mn-status"
+    role="status"
+    aria-live="polite"
+  ></p>
+</section>
+    <section class="mc-calendar" aria-labelledby="mc-title">
+  <div class="mc-calendar-panel">
+    <div class="mc-heading">
+      <h2 id="mc-title">Medicine calendar</h2>
+      <button id="mc-today" type="button">Today</button>
+    </div>
+
+    <div class="mc-month-navigation">
+      <button id="mc-previous" type="button" aria-label="Previous month">
+        ‹
+      </button>
+
+      <h3 id="mc-month" aria-live="polite"></h3>
+
+      <button id="mc-next" type="button" aria-label="Next month">
+        ›
+      </button>
+    </div>
+
+    <div id="mc-weekdays" class="mc-weekdays"></div>
+    <div id="mc-days" class="mc-days"></div>
+
+    <p class="mc-legend">
+      <span aria-hidden="true"></span>
+      <span id="mc-legend-text"></span>
+    </p>
+  </div>
+
+  <div class="mc-schedule-panel">
+    <p id="mc-schedule-label" class="mc-eyebrow"></p>
+    <h3 id="mc-selected-date"></h3>
+
+    <div
+      id="mc-schedule"
+      class="mc-schedule"
+      aria-live="polite"
+    ></div>
+  </div>
+</section>
 
     <div
       id="status"
@@ -159,30 +232,71 @@
         </div>
 
         <form id="medicine-form">
-          <div class="field">
-            <label for="medicine-name" data-i18n="medicineName"></label>
+          <!-- Medicine name -->
+<div class="field">
+  <label for="medicine-name" data-i18n="medicineName"></label>
 
-            <input
-              id="medicine-name"
-              type="text"
-              maxlength="150"
-              autocomplete="off"
-              required
-            >
-          </div>
+  <div class="mm-name-search">
+    <input
+      id="medicine-name"
+      type="text"
+      maxlength="150"
+      autocomplete="off"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-controls="mm-name-options"
+      required
+    >
 
-          <div class="field">
-            <label for="medicine-dose" data-i18n="dose"></label>
+    <div
+      id="mm-name-options"
+      class="mm-name-options"
+      role="listbox"
+      hidden
+    ></div>
+  </div>
+</div>
 
-            <input
-              id="medicine-dose"
-              type="text"
-              maxlength="150"
-              required
-            >
+<!-- Prescribed dose -->
+<div class="field">
+  <label for="medicine-dose" data-i18n="dose"></label>
 
-            <p class="field-hint" data-i18n="doseHint"></p>
-          </div>
+  <input
+    id="medicine-dose"
+    type="text"
+    maxlength="150"
+    required
+  >
+
+  <div class="mm-dose-units" role="group" aria-label="Dose unit">
+    <button
+      type="button"
+      data-dose-unit=""
+      aria-pressed="true"
+    >
+      As written
+    </button>
+
+    <button
+      type="button"
+      data-dose-unit="mg"
+      aria-pressed="false"
+    >
+      mg
+    </button>
+
+    <button
+      type="button"
+      data-dose-unit="mL"
+      aria-pressed="false"
+    >
+      mL
+    </button>
+  </div>
+
+  <p class="field-hint" data-i18n="doseHint"></p>
+</div>
 
           <div class="field">
             <label data-i18n="times"></label>

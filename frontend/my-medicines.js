@@ -170,6 +170,50 @@ function todayKey() {
     String(date.getDate()).padStart(2, "0"),
   ].join("-");
 }
+function updateDateLimits() {
+  const today = todayKey();
+
+  const existing = editingId
+    ? state.medicines.find(item => item.id === editingId)
+    : null;
+
+  // Preserve the original start date when editing an older record.
+  startInput.min =
+    existing?.startDate && existing.startDate < today
+      ? existing.startDate
+      : today;
+
+  endInput.min = startInput.value || today;
+
+  startInput.setCustomValidity("");
+  endInput.setCustomValidity("");
+
+  const keepingOriginalStart =
+    existing && startInput.value === existing.startDate;
+
+  if (
+    startInput.value &&
+    startInput.value < today &&
+    !keepingOriginalStart
+  ) {
+    startInput.setCustomValidity(
+      language === "my"
+        ? "စသောက်မည့်ရက်ကို ယနေ့ သို့မဟုတ် နောင်ရက် ရွေးပါ။"
+        : "Choose today or a future date as the start date."
+    );
+  }
+
+  if (
+    endInput.value &&
+    endInput.value < (startInput.value || today)
+  ) {
+    endInput.setCustomValidity(
+      language === "my"
+        ? "ပြီးဆုံးရက်သည် စသောက်မည့်ရက်ထက် မစောရပါ။"
+        : "The end date must be on or after the start date."
+    );
+  }
+}
 
 function newId() {
   if (globalThis.crypto?.randomUUID) {
@@ -253,9 +297,13 @@ function persist(nextState) {
 
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
-    state = nextState;
+state = nextState;
 
-    return true;
+window.dispatchEvent(
+  new Event("medisafe:medicines-updated")
+);
+
+return true;
   } catch {
     showStatus("storageError", "error");
     return false;
@@ -294,13 +342,18 @@ function addTimeField(value = "") {
 function resetForm() {
   editingId = null;
   form.reset();
+  window.MedicineFormFields?.reset();
 
   startInput.value = todayKey();
+  endInput.value = "";
+
   timeFields.replaceChildren();
   addTimeField();
 
   document.getElementById("cancel-edit").hidden = true;
+
   updateFormLabels();
+  updateDateLimits();
 }
 
 function updateFormLabels() {
@@ -369,6 +422,7 @@ function editMedicine(medicine) {
 
   nameInput.value = medicine.name;
   doseInput.value = medicine.dose;
+  window.MedicineFormFields?.setDose(medicine.dose);
   notesInput.value = medicine.notes;
   startInput.value = medicine.startDate;
   endInput.value = medicine.endDate;
@@ -384,6 +438,7 @@ function editMedicine(medicine) {
 
   form.scrollIntoView({ behavior: "auto", block: "start" });
   nameInput.focus();
+  updateDateLimits();
 }
 
 function deleteMedicine(id) {
@@ -584,20 +639,25 @@ function renderLanguage() {
     );
   });
 
-  updateFormLabels();
+    updateFormLabels();
   renderList();
   showStatus(statusKey, statusType);
+  updateDateLimits();
 }
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+
+  updateDateLimits();
 
   if (!form.reportValidity()) {
     return;
   }
 
   const name = nameInput.value.trim();
-  const dose = doseInput.value.trim();
+  const dose = window.MedicineFormFields
+  ? window.MedicineFormFields.getDose()
+  : doseInput.value.trim();
 
   if (!name || !dose) {
     showStatus("invalidName", "error");
@@ -683,3 +743,11 @@ setInterval(renderProgress, 60000);
 loadState();
 resetForm();
 renderLanguage();
+
+startInput.addEventListener("input", updateDateLimits);
+endInput.addEventListener("input", updateDateLimits);
+
+// Refresh the minimum date when returning to the page.
+window.addEventListener("focus", updateDateLimits);
+
+updateDateLimits();
