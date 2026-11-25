@@ -21,6 +21,7 @@
   <script src="./medicine-calendar.js" defer></script>
   <script src="./my-medicine-fields.js" defer></script>
   <script src="./medicine-notifications.js" defer></script>
+  <script src="./medicine-push.js" defer></script>
 </head>
 
 <body>
@@ -170,6 +171,37 @@
 
   <p
     id="mn-status"
+    class="mn-status"
+    role="status"
+    aria-live="polite"
+  ></p>
+</section>
+<section class="mn-notifications">
+  <div>
+    <h2>Server Push Test</h2>
+
+    <p>
+      ဖုန်းကို server နှင့် ချိတ်ပြီး
+      15 စက္ကန့်နောက်ရောက်မည့် အသိပေးချက်ကို စမ်းပါ။
+    </p>
+  </div>
+
+  <div class="mn-actions">
+    <button id="mp-connect" type="button">
+      ဖုန်းကို ချိတ်မည်
+    </button>
+
+    <button id="mp-test" type="button" disabled>
+      15 စက္ကန့်နောက် စမ်းမည်
+    </button>
+
+    <button id="mp-disconnect" type="button" disabled>
+      ချိတ်ဆက်မှု ဖြုတ်မည်
+    </button>
+  </div>
+
+  <p
+    id="mp-status"
     class="mn-status"
     role="status"
     aria-live="polite"

@@ -38,3 +38,37 @@ self.addEventListener("notificationclick", event => {
     })()
   );
 });
+self.addEventListener("push", event => {
+  event.waitUntil(
+    (async () => {
+      let payload = {};
+
+      try {
+       const data = event.data?.json();
+
+payload =
+  data && typeof data === "object" && !Array.isArray(data)
+    ? data
+    : {};
+      } catch {
+        // Display a generic message if the payload cannot be read.
+      }
+
+      const title =
+        typeof payload.title === "string"
+          ? payload.title.slice(0, 120)
+          : "MediSafe";
+
+      const body =
+        typeof payload.body === "string"
+          ? payload.body.slice(0, 400)
+          : "You have a new notification.";
+
+      await self.registration.showNotification(title, {
+        body,
+        tag: "medisafe-server-test",
+        lang: payload.language === "my" ? "my" : "en"
+      });
+    })()
+  );
+});
