@@ -2,6 +2,7 @@
 <html lang="my">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
@@ -13,131 +14,187 @@
   <link rel="stylesheet" href="./top-navigation.css">
   <link rel="stylesheet" href="./footer.css">
   <link rel="stylesheet" href="./medicine-calendar.css">
-  <link rel="stylesheet" href="./medicine-notifications.css">
+
+  <style>
+    html[lang^="my"] .mm-copy-en {
+      display: none;
+    }
+
+    html:not([lang^="my"]) .mm-copy-my {
+      display: none;
+    }
+
+    #mp-form-status {
+      margin: 12px 0 0;
+      color: #557568;
+      font-size: 13px;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
+    }
+
+    #mp-form-status:empty {
+      display: none;
+    }
+
+    #mp-form-status.is-error {
+      color: #a63636;
+    }
+  </style>
 
   <script src="./my-medicines.js" defer></script>
   <script src="./top-navigation.js" defer></script>
   <script src="./footer.js" defer></script>
   <script src="./medicine-calendar.js" defer></script>
   <script src="./my-medicine-fields.js" defer></script>
-  <script src="./medicine-notifications.js" defer></script>
   <script src="./medicine-push.js" defer></script>
 </head>
 
 <body>
   <header class="site-header">
-  <!-- Logo -->
-  <div class="brand">
-    <span class="brand-icon" aria-hidden="true">
-      <svg viewBox="0 0 48 48" fill="none">
-        <path
-          d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
-          fill="currentColor"
-        />
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path
+            d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
+            fill="currentColor"
+          />
 
-        <path
-          d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
-          fill="white"
-        />
-      </svg>
-    </span>
+          <path
+            d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
+            fill="white"
+          />
+        </svg>
+      </span>
 
-    <span class="brand-name">MediSafe</span>
-  </div>
+      <span class="brand-name">MediSafe</span>
+    </div>
 
-  <!-- Center navigation -->
-  <nav class="top-navigation" aria-label="Main navigation">
-    <a class="top-nav-link" href="./find-medicine.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="10.5" cy="10.5" r="6.5"/>
-        <path d="m16 16 4.5 4.5"/>
-      </svg>
-
-      <span>Find Medicine</span>
-    </a>
-
-    <a class="top-nav-link" href="./my-medicines.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="6" y="5" width="12" height="16" rx="2"/>
-        <path d="M9 5V3h6v2M12 10v6M9 13h6"/>
-      </svg>
-
-      <span>My Medicine</span>
-    </a>
-
-    <a class="top-nav-link" href="./news.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="4" y="3" width="16" height="18" rx="2"/>
-        <path d="M8 7h8M8 11h8M8 15h4M8 18h8"/>
-      </svg>
-
-      <span>News</span>
-    </a>
-
-    <a class="top-nav-link" href="./online-shop.html">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="m3 9 2-6h14l2 6"/>
-        <path
-          d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"
-        />
-        <path d="M5 12v9h14v-9M10 21v-7h4v7"/>
-      </svg>
-
-      <span>Online Shop</span>
-    </a>
-  </nav>
-
-  <!-- Language -->
-  <div class="header-actions">
-  <div
-    class="language-switch"
-    role="group"
-    aria-label="Language"
-  >
-    <button
-      type="button"
-      data-language="en"
-      aria-pressed="true"
+    <nav
+      class="top-navigation"
+      aria-label="Main navigation"
     >
-      English
-    </button>
+      <a
+        class="top-nav-link"
+        href="./find-medicine.html"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="6.5"></circle>
+          <path d="m16 16 4.5 4.5"></path>
+        </svg>
 
-    <button
-      type="button"
-      data-language="my"
-      aria-pressed="false"
-      lang="my"
-    >
-      မြန်မာ
-    </button>
-  </div>
+        <span>Find Medicine</span>
+      </a>
 
-  <a class="header-signin" href="./login.html">
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.8"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="8" r="4"/>
-      <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
-    </svg>
+      <a
+        class="top-nav-link"
+        href="./my-medicines.html"
+        aria-current="page"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect
+            x="6"
+            y="5"
+            width="12"
+            height="16"
+            rx="2"
+          ></rect>
 
-    <span>Sign in</span>
-  </a>
-</div>
-</header>
+          <path d="M9 5V3h6v2M12 10v6M9 13h6"></path>
+        </svg>
+
+        <span>My Medicine</span>
+      </a>
+
+      <a
+        class="top-nav-link"
+        href="./news.html"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect
+            x="4"
+            y="3"
+            width="16"
+            height="18"
+            rx="2"
+          ></rect>
+
+          <path d="M8 7h8M8 11h8M8 15h4M8 18h8"></path>
+        </svg>
+
+        <span>News</span>
+      </a>
+
+      <a
+        class="top-nav-link"
+        href="./online-shop.html"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m3 9 2-6h14l2 6"></path>
+
+          <path
+            d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"
+          ></path>
+
+          <path d="M5 12v9h14v-9M10 21v-7h4v7"></path>
+        </svg>
+
+        <span>Online Shop</span>
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <div
+        class="language-switch"
+        role="group"
+        aria-label="Language"
+      >
+        <button
+          type="button"
+          data-language="en"
+          aria-pressed="false"
+        >
+          English
+        </button>
+
+        <button
+          type="button"
+          data-language="my"
+          aria-pressed="true"
+          lang="my"
+        >
+          မြန်မာ
+        </button>
+      </div>
+
+      <a class="header-signin" href="./login.html">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+        </svg>
+
+        <span>Sign in</span>
+      </a>
+    </div>
+  </header>
+
   <main class="page">
-    
-
     <section class="page-heading">
       <div>
         <p class="eyebrow">MY MEDISAFE</p>
         <h1 data-i18n="title"></h1>
-        <p class="description" data-i18n="description"></p>
+
+        <p
+          class="description"
+          data-i18n="description"
+        ></p>
       </div>
 
       <div class="today-card">
@@ -146,106 +203,87 @@
       </div>
     </section>
 
-    <p class="storage-notice" data-i18n="storageNotice"></p>
+    <p class="storage-notice">
+      <span class="mm-copy-en" lang="en">
+        Medicine records stay in this browser.
+        Reminder times and taken records are also saved
+        to the reminder service.
+      </span>
+
+      <span class="mm-copy-my" lang="my">
+        ဆေးမှတ်တမ်းများကို ဤ browser တွင် သိမ်းထားပြီး
+        သတိပေးရန်အချိန်နှင့် သောက်ပြီးမှတ်တမ်းကို
+        သတိပေးစနစ်တွင်လည်း သိမ်းထားသည်။
+      </span>
+    </p>
+
     <section
-  class="mn-notifications"
-  aria-labelledby="mn-title"
->
-  <div>
-    <h2 id="mn-title">Medicine notifications</h2>
+      class="mc-calendar"
+      aria-labelledby="mc-title"
+    >
+      <div class="mc-calendar-panel">
+        <div class="mc-heading">
+          <h2 id="mc-title">Medicine calendar</h2>
 
-    <p id="mn-description">
-      Allow notifications, then send a test to this device.
-    </p>
-  </div>
+          <button id="mc-today" type="button">
+            Today
+          </button>
+        </div>
 
-  <div class="mn-actions">
-    <button id="mn-allow" type="button">
-      Allow notifications
-    </button>
+        <div class="mc-month-navigation">
+          <button
+            id="mc-previous"
+            type="button"
+            aria-label="Previous month"
+          >
+            ‹
+          </button>
 
-    <button id="mn-test" type="button" disabled>
-      Test notification
-    </button>
-  </div>
+          <h3
+            id="mc-month"
+            aria-live="polite"
+          ></h3>
 
-  <p
-    id="mn-status"
-    class="mn-status"
-    role="status"
-    aria-live="polite"
-  ></p>
-</section>
-<section class="mn-notifications">
-  <div>
-    <h2>Server Push Test</h2>
+          <button
+            id="mc-next"
+            type="button"
+            aria-label="Next month"
+          >
+            ›
+          </button>
+        </div>
 
-    <p>
-      ဖုန်းကို server နှင့် ချိတ်ပြီး
-      15 စက္ကန့်နောက်ရောက်မည့် အသိပေးချက်ကို စမ်းပါ။
-    </p>
-  </div>
+        <div
+          id="mc-weekdays"
+          class="mc-weekdays"
+        ></div>
 
-  <div class="mn-actions">
-    <button id="mp-connect" type="button">
-      ဖုန်းကို ချိတ်မည်
-    </button>
+        <div
+          id="mc-days"
+          class="mc-days"
+        ></div>
 
-    <button id="mp-test" type="button" disabled>
-      15 စက္ကန့်နောက် စမ်းမည်
-    </button>
+        <p class="mc-legend">
+          <span aria-hidden="true"></span>
+          <span id="mc-legend-text"></span>
+        </p>
+      </div>
 
-    <button id="mp-disconnect" type="button" disabled>
-      ချိတ်ဆက်မှု ဖြုတ်မည်
-    </button>
-  </div>
+      <div class="mc-schedule-panel">
+        <p
+          id="mc-schedule-label"
+          class="mc-eyebrow"
+        ></p>
 
-  <p
-    id="mp-status"
-    class="mn-status"
-    role="status"
-    aria-live="polite"
-  ></p>
-</section>
-    <section class="mc-calendar" aria-labelledby="mc-title">
-  <div class="mc-calendar-panel">
-    <div class="mc-heading">
-      <h2 id="mc-title">Medicine calendar</h2>
-      <button id="mc-today" type="button">Today</button>
-    </div>
+        <h3 id="mc-selected-date"></h3>
 
-    <div class="mc-month-navigation">
-      <button id="mc-previous" type="button" aria-label="Previous month">
-        ‹
-      </button>
-
-      <h3 id="mc-month" aria-live="polite"></h3>
-
-      <button id="mc-next" type="button" aria-label="Next month">
-        ›
-      </button>
-    </div>
-
-    <div id="mc-weekdays" class="mc-weekdays"></div>
-    <div id="mc-days" class="mc-days"></div>
-
-    <p class="mc-legend">
-      <span aria-hidden="true"></span>
-      <span id="mc-legend-text"></span>
-    </p>
-  </div>
-
-  <div class="mc-schedule-panel">
-    <p id="mc-schedule-label" class="mc-eyebrow"></p>
-    <h3 id="mc-selected-date"></h3>
-
-    <div
-      id="mc-schedule"
-      class="mc-schedule"
-      aria-live="polite"
-    ></div>
-  </div>
-</section>
+        <div
+          id="mc-schedule"
+          class="mc-schedule"
+          aria-live="polite"
+        ></div>
+      </div>
+    </section>
 
     <div
       id="status"
@@ -256,79 +294,101 @@
     ></div>
 
     <div class="workspace">
-      <!-- Add / edit medicine -->
-      <section class="form-card" aria-labelledby="form-title">
+      <section
+        class="form-card"
+        aria-labelledby="form-title"
+      >
         <div class="section-heading">
-          <span class="section-icon" aria-hidden="true">+</span>
-          <h2 id="form-title" data-i18n="addMedicine"></h2>
+          <span
+            class="section-icon"
+            aria-hidden="true"
+          >
+            +
+          </span>
+
+          <h2
+            id="form-title"
+            data-i18n="addMedicine"
+          ></h2>
         </div>
 
         <form id="medicine-form">
-          <!-- Medicine name -->
-<div class="field">
-  <label for="medicine-name" data-i18n="medicineName"></label>
+          <div class="field">
+            <label
+              for="medicine-name"
+              data-i18n="medicineName"
+            ></label>
 
-  <div class="mm-name-search">
-    <input
-      id="medicine-name"
-      type="text"
-      maxlength="150"
-      autocomplete="off"
-      role="combobox"
-      aria-autocomplete="list"
-      aria-expanded="false"
-      aria-controls="mm-name-options"
-      required
-    >
+            <div class="mm-name-search">
+              <input
+                id="medicine-name"
+                type="text"
+                maxlength="150"
+                autocomplete="off"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="mm-name-options"
+                required
+              >
 
-    <div
-      id="mm-name-options"
-      class="mm-name-options"
-      role="listbox"
-      hidden
-    ></div>
-  </div>
-</div>
+              <div
+                id="mm-name-options"
+                class="mm-name-options"
+                role="listbox"
+                hidden
+              ></div>
+            </div>
+          </div>
 
-<!-- Prescribed dose -->
-<div class="field">
-  <label for="medicine-dose" data-i18n="dose"></label>
+          <div class="field">
+            <label
+              for="medicine-dose"
+              data-i18n="dose"
+            ></label>
 
-  <input
-    id="medicine-dose"
-    type="text"
-    maxlength="150"
-    required
-  >
+            <input
+              id="medicine-dose"
+              type="text"
+              maxlength="150"
+              required
+            >
 
-  <div class="mm-dose-units" role="group" aria-label="Dose unit">
-    <button
-      type="button"
-      data-dose-unit=""
-      aria-pressed="true"
-    >
-      As written
-    </button>
+            <div
+              class="mm-dose-units"
+              role="group"
+              aria-label="Dose unit"
+            >
+              <button
+                type="button"
+                data-dose-unit=""
+                aria-pressed="true"
+              >
+                As written
+              </button>
 
-    <button
-      type="button"
-      data-dose-unit="mg"
-      aria-pressed="false"
-    >
-      mg
-    </button>
+              <button
+                type="button"
+                data-dose-unit="mg"
+                aria-pressed="false"
+              >
+                mg
+              </button>
 
-    <button
-      type="button"
-      data-dose-unit="mL"
-      aria-pressed="false"
-    >
-      mL
-    </button>
-  </div>
+              <button
+                type="button"
+                data-dose-unit="mL"
+                aria-pressed="false"
+              >
+                mL
+              </button>
+            </div>
 
-  <p class="field-hint" data-i18n="doseHint"></p>
-</div>
+            <p
+              class="field-hint"
+              data-i18n="doseHint"
+            ></p>
+          </div>
 
           <div class="field">
             <label data-i18n="times"></label>
@@ -345,18 +405,36 @@
 
           <div class="date-fields">
             <div class="field">
-              <label for="start-date" data-i18n="startDate"></label>
-              <input id="start-date" type="date" required>
+              <label
+                for="start-date"
+                data-i18n="startDate"
+              ></label>
+
+              <input
+                id="start-date"
+                type="date"
+                required
+              >
             </div>
 
             <div class="field">
-              <label for="end-date" data-i18n="endDate"></label>
-              <input id="end-date" type="date">
+              <label
+                for="end-date"
+                data-i18n="endDate"
+              ></label>
+
+              <input
+                id="end-date"
+                type="date"
+              >
             </div>
           </div>
 
           <div class="field">
-            <label for="medicine-notes" data-i18n="notes"></label>
+            <label
+              for="medicine-notes"
+              data-i18n="notes"
+            ></label>
 
             <textarea
               id="medicine-notes"
@@ -379,18 +457,37 @@
             data-i18n="cancel"
             hidden
           ></button>
+
+          <p
+            id="mp-form-status"
+            class="save-feedback"
+            role="status"
+            aria-live="polite"
+          ></p>
         </form>
       </section>
 
-      <!-- Saved medicines -->
-      <section class="list-panel" aria-labelledby="list-title">
+      <section
+        class="list-panel"
+        aria-labelledby="list-title"
+      >
         <div class="list-heading">
           <div>
-            <p class="eyebrow" data-i18n="yourRoutine"></p>
-            <h2 id="list-title" data-i18n="savedMedicines"></h2>
+            <p
+              class="eyebrow"
+              data-i18n="yourRoutine"
+            ></p>
+
+            <h2
+              id="list-title"
+              data-i18n="savedMedicines"
+            ></h2>
           </div>
 
-          <span id="medicine-count" class="count-badge"></span>
+          <span
+            id="medicine-count"
+            class="count-badge"
+          ></span>
         </div>
 
         <div class="progress-card">
@@ -399,14 +496,32 @@
             <strong id="progress-text"></strong>
           </div>
 
-          <progress id="today-progress" max="1" value="0"></progress>
+          <progress
+            id="today-progress"
+            max="1"
+            value="0"
+          ></progress>
 
-          <p data-i18n="notificationNote"></p>
+          <p>
+            <span class="mm-copy-en" lang="en">
+              Mark each dose taken after taking it.
+            </span>
+
+            <span class="mm-copy-my" lang="my">
+              ဆေးသောက်ပြီးတိုင်း သောက်ပြီးမှတ်တမ်းတင်ပါ။
+            </span>
+          </p>
         </div>
 
-        <div id="medicine-list" class="medicine-list"></div>
+        <div
+          id="medicine-list"
+          class="medicine-list"
+        ></div>
 
-        <div id="empty-state" class="empty-state">
+        <div
+          id="empty-state"
+          class="empty-state"
+        >
           <span aria-hidden="true">✚</span>
           <h3 data-i18n="emptyTitle"></h3>
           <p data-i18n="emptyDescription"></p>
@@ -414,74 +529,117 @@
       </section>
     </div>
   </main>
-  <footer class="ms-footer" aria-label="MediSafe footer">
-  <div class="ms-footer-inner">
-    <div class="ms-footer-about">
-      <a class="ms-footer-brand" href="./find-medicine.html">
-        <span class="ms-footer-icon" aria-hidden="true">✚</span>
-        <span>MediSafe</span>
-      </a>
 
-      <p data-footer-i18n="description">
-        Understand your medicines. Keep your routine organised.
+  <footer
+    class="ms-footer"
+    aria-label="MediSafe footer"
+  >
+    <div class="ms-footer-inner">
+      <div class="ms-footer-about">
+        <a
+          class="ms-footer-brand"
+          href="./find-medicine.html"
+        >
+          <span
+            class="ms-footer-icon"
+            aria-hidden="true"
+          >
+            ✚
+          </span>
+
+          <span>MediSafe</span>
+        </a>
+
+        <p data-footer-i18n="description">
+          Understand your medicines.
+          Keep your routine organised.
+        </p>
+
+        <span
+          class="ms-footer-language"
+          data-footer-i18n="languages"
+        >
+          Available in English and Myanmar
+        </span>
+      </div>
+
+      <nav
+        class="ms-footer-navigation"
+        aria-labelledby="footer-explore"
+      >
+        <h2
+          id="footer-explore"
+          data-footer-i18n="explore"
+        >
+          Explore
+        </h2>
+
+        <a
+          href="./find-medicine.html"
+          data-footer-i18n="find"
+        >
+          Find Medicine
+        </a>
+
+        <a
+          href="./my-medicines.html"
+          data-footer-i18n="myMedicine"
+        >
+          My Medicine
+        </a>
+
+        <a
+          href="./news.html"
+          data-footer-i18n="news"
+        >
+          News
+        </a>
+
+        <a
+          href="./online-shop.html"
+          data-footer-i18n="shops"
+        >
+          Online Shop
+        </a>
+      </nav>
+
+      <div class="ms-footer-information">
+        <h2 data-footer-i18n="information">
+          Before you use
+        </h2>
+
+        <p data-footer-i18n="medicalNote">
+          Medicine information is for learning.
+          Follow your product label and advice
+          from your doctor or pharmacist.
+        </p>
+
+        <a
+          class="ms-footer-back"
+          href="#"
+          data-footer-back
+        >
+          <span data-footer-i18n="backToTop">
+            Back to top
+          </span>
+
+          <span aria-hidden="true">↑</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="ms-footer-bottom">
+      <p>
+        © <span data-footer-year></span> MediSafe.
+        <span data-footer-i18n="rights">
+          All rights reserved.
+        </span>
       </p>
 
-      <span class="ms-footer-language" data-footer-i18n="languages">
-        Available in English and Myanmar
+      <span data-footer-i18n="tagline">
+        A little clarity for everyday care.
       </span>
     </div>
-
-    <nav class="ms-footer-navigation" aria-labelledby="footer-explore">
-      <h2 id="footer-explore" data-footer-i18n="explore">
-        Explore
-      </h2>
-
-      <a href="./find-medicine.html" data-footer-i18n="find">
-        Find Medicine
-      </a>
-
-      <a href="./my-medicines.html" data-footer-i18n="myMedicine">
-        My Medicine
-      </a>
-
-      <a href="./news.html" data-footer-i18n="news">
-        News
-      </a>
-
-      <a href="./online-shop.html" data-footer-i18n="shops">
-        Online Shop
-      </a>
-    </nav>
-
-    <div class="ms-footer-information">
-      <h2 data-footer-i18n="information">Before you use</h2>
-
-      <p data-footer-i18n="medicalNote">
-        Medicine information is for learning. Follow your product label
-        and advice from your doctor or pharmacist.
-      </p>
-
-      <a
-        class="ms-footer-back"
-        href="#"
-        data-footer-back
-      >
-        <span data-footer-i18n="backToTop">Back to top</span>
-        <span aria-hidden="true">↑</span>
-      </a>
-    </div>
-  </div>
-
-  <div class="ms-footer-bottom">
-    <p>
-      © <span data-footer-year></span> MediSafe.
-      <span data-footer-i18n="rights">All rights reserved.</span>
-    </p>
-
-    <span data-footer-i18n="tagline">
-      A little clarity for everyday care.
-    </span>
-  </div>
-</footer>
+  </footer>
 </body>
 </html>

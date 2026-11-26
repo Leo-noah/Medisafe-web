@@ -6,10 +6,11 @@ import logging
 import os
 import re
 import sqlite3
+import threading
 import time
 
 from contextlib import asynccontextmanager, contextmanager, suppress
-from datetime import date as CalendarDate, datetime
+from datetime import date as CalendarDate, datetime, timedelta
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
@@ -78,6 +79,13 @@ DATABASE.parent.mkdir(parents=True, exist_ok=True)
 
 logger = logging.getLogger("medisafe-reminders")
 
+# Use one server worker. This lock serializes schedule updates
+# with the scheduler's delivery checks.
+REMINDER_LOCK = threading.RLock()
+
+REMINDER_COUNT = 3
+REMINDER_INTERVAL = 60
+
 
 def decode_url_key(value: str) -> bytes:
     return base64.b64decode(
@@ -87,7 +95,7 @@ def decode_url_key(value: str) -> bytes:
     )
 
 
-# Fail early if the configured public/private keys do not match.
+# Check that the existing VAPID keys match.
 try:
     private_object = serialization.load_der_private_key(
         base64.b64decode(PRIVATE_KEY, validate=True),
@@ -95,8 +103,14 @@ try:
     )
 
     if (
-        not isinstance(private_object, ec.EllipticCurvePrivateKey)
-        or not isinstance(private_object.curve, ec.SECP256R1)
+        not isinstance(
+            private_object,
+            ec.EllipticCurvePrivateKey,
+        )
+        or not isinstance(
+            private_object.curve,
+            ec.SECP256R1,
+        )
     ):
         raise ValueError("Expected a P-256 private key.")
 
@@ -110,7 +124,8 @@ try:
 
 except Exception as error:
     raise RuntimeError(
-        "Invalid VAPID configuration. Use the matching generated keys."
+        "Invalid VAPID configuration. "
+        "Use the matching generated keys."
     ) from error
 
 
@@ -120,7 +135,10 @@ except Exception as error:
 
 @contextmanager
 def database():
-    connection = sqlite3.connect(DATABASE, timeout=15)
+    connection = sqlite3.connect(
+        DATABASE,
+        timeout=15,
+    )
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
 
@@ -167,18 +185,41 @@ with database() as connection:
         );
     """)
 
+    # Add the new column without deleting existing data.
+    columns = {
+        row["name"]
+        for row in connection.execute(
+            "PRAGMA table_info(push_jobs)"
+        )
+    }
+
+    if "reminder_targets" not in columns:
+        connection.execute(
+            "ALTER TABLE push_jobs "
+            "ADD COLUMN reminder_targets TEXT"
+        )
+
 
 # --------------------------------------------------
 # Models
 # --------------------------------------------------
 
 class PushKeys(BaseModel):
-    p256dh: str = Field(min_length=20, max_length=200)
-    auth: str = Field(min_length=10, max_length=100)
+    p256dh: str = Field(
+        min_length=20,
+        max_length=200,
+    )
+    auth: str = Field(
+        min_length=10,
+        max_length=100,
+    )
 
 
 class Subscription(BaseModel):
-    endpoint: str = Field(min_length=20, max_length=2048)
+    endpoint: str = Field(
+        min_length=20,
+        max_length=2048,
+    )
     keys: PushKeys
 
 
@@ -195,7 +236,11 @@ class MedicineReminder(BaseModel):
 
     startDate: CalendarDate
     endDate: CalendarDate | None = None
-    times: list[str] = Field(min_length=1, max_length=24)
+
+    times: list[str] = Field(
+        min_length=1,
+        max_length=24,
+    )
 
     @model_validator(mode="after")
     def validate_dates_and_times(self):
@@ -205,7 +250,9 @@ class MedicineReminder(BaseModel):
             )
 
         if len(set(self.times)) != len(self.times):
-            raise ValueError("Duplicate scheduled times.")
+            raise ValueError(
+                "Duplicate scheduled times."
+            )
 
         for value in self.times:
             if not re.fullmatch(
@@ -220,7 +267,10 @@ class MedicineReminder(BaseModel):
 
 
 class TakenRecord(BaseModel):
-    medicineId: str = Field(min_length=1, max_length=100)
+    medicineId: str = Field(
+        min_length=1,
+        max_length=100,
+    )
     date: CalendarDate
     time: str = Field(
         pattern=r"^(?:[01]\d|2[0-3]):[0-5]\d$"
@@ -229,22 +279,39 @@ class TakenRecord(BaseModel):
 
 class ReminderSettings(BaseModel):
     language: Literal["en", "my"] = "my"
-    timezone: str = Field(min_length=1, max_length=100)
 
-    medicines: list[MedicineReminder] = Field(max_length=200)
-    logs: list[TakenRecord] = Field(max_length=4000)
+    timezone: str = Field(
+        min_length=1,
+        max_length=100,
+    )
+
+    medicines: list[MedicineReminder] = Field(
+        max_length=200
+    )
+
+    logs: list[TakenRecord] = Field(
+        max_length=4000
+    )
 
     @model_validator(mode="after")
     def validate_settings(self):
         try:
             ZoneInfo(self.timezone)
-        except (ZoneInfoNotFoundError, ValueError):
+        except (
+            ZoneInfoNotFoundError,
+            ValueError,
+        ):
             raise ValueError("Invalid timezone.")
 
-        ids = [medicine.id for medicine in self.medicines]
+        ids = [
+            medicine.id
+            for medicine in self.medicines
+        ]
 
         if len(ids) != len(set(ids)):
-            raise ValueError("Duplicate medicine IDs.")
+            raise ValueError(
+                "Duplicate medicine IDs."
+            )
 
         return self
 
@@ -255,14 +322,22 @@ class ReminderSettings(BaseModel):
 
 def device_hash(authorization: str) -> str:
     if not authorization.startswith("Bearer "):
-        raise HTTPException(401, "Device token required.")
+        raise HTTPException(
+            401,
+            "Device token required.",
+        )
 
     token = authorization[len("Bearer "):]
 
     if not re.fullmatch(r"[a-f0-9]{64}", token):
-        raise HTTPException(401, "Invalid device token.")
+        raise HTTPException(
+            401,
+            "Invalid device token.",
+        )
 
-    return hashlib.sha256(token.encode()).hexdigest()
+    return hashlib.sha256(
+        token.encode()
+    ).hexdigest()
 
 
 def validate_subscription(subscription: Subscription):
@@ -280,10 +355,16 @@ def validate_subscription(subscription: Subscription):
         )
 
         if not valid_endpoint:
-            raise ValueError("Unsupported endpoint.")
+            raise ValueError(
+                "Unsupported endpoint."
+            )
 
-        public = decode_url_key(subscription.keys.p256dh)
-        auth = decode_url_key(subscription.keys.auth)
+        public = decode_url_key(
+            subscription.keys.p256dh
+        )
+        auth = decode_url_key(
+            subscription.keys.auth
+        )
 
         ec.EllipticCurvePublicKey.from_encoded_point(
             ec.SECP256R1(),
@@ -291,12 +372,15 @@ def validate_subscription(subscription: Subscription):
         )
 
         if len(auth) != 16:
-            raise ValueError("Invalid auth key.")
+            raise ValueError(
+                "Invalid auth key."
+            )
 
     except Exception:
         raise HTTPException(
             400,
-            "Invalid subscription. This version supports Android Chrome."
+            "Invalid subscription. "
+            "This version supports Chrome FCM subscriptions.",
         )
 
 
@@ -304,17 +388,26 @@ def validate_subscription(subscription: Subscription):
 # Notification content
 # --------------------------------------------------
 
-def notification_payload(language: str, test: bool, tag: str):
+def notification_payload(
+    language: str,
+    test: bool,
+    tag: str,
+):
     if language == "my":
         if test:
             title = "MediSafe · Server Push စမ်းသပ်မှု"
-            body = "Server မှ ပို့သောအသိပေးချက် ဖုန်းဆီ ရောက်လာပါပြီ။"
+            body = (
+                "Server မှ ပို့သောအသိပေးချက် "
+                "ဤ device ဆီ ရောက်လာပါပြီ။"
+            )
         else:
             title = "MediSafe · ဆေးသောက်ချိန်"
             body = (
                 "သင့်ဆေးသောက်ချိန် ရောက်ပါပြီ။ "
-                "ကိုယ်ပိုင်ဆေးစာရင်းတွင် အစီအစဉ်ကို ကြည့်ပါ။"
+                "ကိုယ်ပိုင်ဆေးစာရင်းတွင် "
+                "အစီအစဉ်ကို ကြည့်ပါ။"
             )
+
     else:
         title = (
             "MediSafe · Server push test"
@@ -340,94 +433,228 @@ def notification_payload(language: str, test: bool, tag: str):
 
 
 # --------------------------------------------------
-# Scheduler
+# Reminder scheduling
 # --------------------------------------------------
 
+def current_time():
+    return time.time()
+
+
+def pending_targets(settings, targets):
+    """
+    Check original doses against the latest schedule
+    and the latest taken records.
+    """
+    medicines = {
+        medicine["id"]: medicine
+        for medicine in settings["medicines"]
+    }
+
+    taken = {
+        (
+            log["medicineId"],
+            log["date"],
+            log["time"],
+        )
+        for log in settings["logs"]
+    }
+
+    remaining = []
+
+    for target in targets:
+        medicine = medicines.get(
+            target["medicineId"]
+        )
+
+        day = target["date"]
+        scheduled = target["time"]
+
+        if (
+            medicine
+            and medicine["startDate"] <= day
+            and (
+                not medicine["endDate"]
+                or day <= medicine["endDate"]
+            )
+            and scheduled in medicine["times"]
+            and (
+                medicine["id"],
+                day,
+                scheduled,
+            ) not in taken
+        ):
+            remaining.append(target)
+
+    return remaining
+
+
 def enqueue_due_reminders():
+    now = current_time()
+
     with database() as connection:
         rows = connection.execute("""
-            SELECT schedules.token_hash, schedules.payload
+            SELECT token_hash, payload
             FROM schedules
-            JOIN devices USING (token_hash)
         """).fetchall()
 
     for row in rows:
         try:
-            settings = json.loads(row["payload"])
-
-            local_now = datetime.now(
-                ZoneInfo(settings["timezone"])
+            settings = json.loads(
+                row["payload"]
             )
 
-            day = local_now.date().isoformat()
-            scheduled_time = local_now.strftime("%H:%M")
-
-            taken = {
-                (
-                    log["medicineId"],
-                    log["date"],
-                    log["time"],
-                )
-                for log in settings["logs"]
-            }
-
-            has_due_medicine = any(
-                medicine["startDate"] <= day
-                and (
-                    not medicine["endDate"]
-                    or medicine["endDate"] >= day
-                )
-                and scheduled_time in medicine["times"]
-                and (
-                    medicine["id"],
-                    day,
-                    scheduled_time,
-                ) not in taken
-                for medicine in settings["medicines"]
+            zone = ZoneInfo(
+                settings["timezone"]
             )
 
-            if not has_due_medicine:
-                continue
-
-            minute_start = local_now.replace(
-                second=0,
-                microsecond=0,
-            ).timestamp()
-
-            job_key = f"reminder:{day}:{scheduled_time}"
-
-            payload = notification_payload(
-                settings["language"],
-                test=False,
-                tag=f"medisafe-{day}-{scheduled_time}",
+            local_now = datetime.fromtimestamp(
+                now,
+                zone,
             )
 
-            with database() as connection:
-                connection.execute("""
-                    INSERT OR IGNORE INTO push_jobs (
-                        token_hash,
-                        job_key,
-                        kind,
-                        payload,
-                        due_at,
-                        expires_at,
-                        next_try
+            # Include yesterday so repeats for a 23:59 dose
+            # can continue after midnight.
+            candidate_dates = (
+                local_now.date() - timedelta(days=1),
+                local_now.date(),
+            )
+
+            for day_date in candidate_dates:
+                day = day_date.isoformat()
+                slots = {}
+
+                for medicine in settings["medicines"]:
+                    if (
+                        medicine["startDate"] > day
+                        or (
+                            medicine["endDate"]
+                            and medicine["endDate"] < day
+                        )
+                    ):
+                        continue
+
+                    for scheduled in medicine["times"]:
+                        slots.setdefault(
+                            scheduled,
+                            [],
+                        ).append({
+                            "medicineId": medicine["id"],
+                            "date": day,
+                            "time": scheduled,
+                        })
+
+                for scheduled, targets in slots.items():
+                    base = datetime.fromisoformat(
+                        f"{day}T{scheduled}:00"
+                    ).replace(
+                        tzinfo=zone
+                    ).timestamp()
+
+                    window_end = (
+                        base
+                        + REMINDER_COUNT
+                        * REMINDER_INTERVAL
                     )
-                    SELECT ?, ?, ?, ?, ?, ?, ?
-                    WHERE EXISTS (
-                        SELECT 1 FROM devices
-                        WHERE token_hash = ?
+
+                    if not (
+                        base <= now < window_end
+                    ):
+                        continue
+
+                    targets = pending_targets(
+                        settings,
+                        targets,
                     )
-                """, (
-                    row["token_hash"],
-                    job_key,
-                    "reminder",
-                    json.dumps(payload, ensure_ascii=False),
-                    minute_start,
-                    minute_start + 120,
-                    minute_start,
-                    row["token_hash"],
-                ))
+
+                    if not targets:
+                        continue
+
+                    for repeat in range(REMINDER_COUNT):
+                        due = (
+                            base
+                            + repeat
+                            * REMINDER_INTERVAL
+                        )
+
+                        expires = (
+                            due
+                            + REMINDER_INTERVAL
+                        )
+
+                        # Do not replay missed rounds in a burst.
+                        if now >= expires:
+                            continue
+
+                        key = (
+                            f"reminder:v2:{day}:"
+                            f"{scheduled}:{repeat}"
+                        )
+
+                        payload = notification_payload(
+                            settings["language"],
+                            False,
+                            key,
+                        )
+
+                        payload["reminderNumber"] = (
+                            repeat + 1
+                        )
+                        payload["reminderTotal"] = (
+                            REMINDER_COUNT
+                        )
+
+                        with database() as connection:
+                            # Avoid repeating an initial reminder
+                            # accepted by the previous version.
+                            legacy = connection.execute("""
+                                SELECT sent
+                                FROM push_jobs
+                                WHERE token_hash = ?
+                                  AND job_key = ?
+                            """, (
+                                row["token_hash"],
+                                f"reminder:{day}:{scheduled}",
+                            )).fetchone()
+
+                            if (
+                                repeat == 0
+                                and legacy
+                                and legacy["sent"] == 1
+                            ):
+                                continue
+
+                            connection.execute("""
+                                INSERT OR IGNORE INTO push_jobs (
+                                    token_hash,
+                                    job_key,
+                                    kind,
+                                    payload,
+                                    due_at,
+                                    expires_at,
+                                    next_try,
+                                    reminder_targets
+                                )
+                                SELECT
+                                    ?, ?, 'reminder',
+                                    ?, ?, ?, ?, ?
+                                WHERE EXISTS (
+                                    SELECT 1
+                                    FROM devices
+                                    WHERE token_hash = ?
+                                )
+                            """, (
+                                row["token_hash"],
+                                key,
+                                json.dumps(
+                                    payload,
+                                    ensure_ascii=False,
+                                ),
+                                due,
+                                expires,
+                                due,
+                                json.dumps(targets),
+                                row["token_hash"],
+                            ))
 
         except Exception as error:
             logger.warning(
@@ -436,8 +663,88 @@ def enqueue_due_reminders():
             )
 
 
+def prepare_reminder(job):
+    """
+    Re-check the latest taken state immediately before
+    submitting a reminder to the push service.
+    """
+    with database() as connection:
+        row = connection.execute("""
+            SELECT payload
+            FROM schedules
+            WHERE token_hash = ?
+        """, (
+            job["token_hash"],
+        )).fetchone()
+
+        settings = (
+            json.loads(row["payload"])
+            if row
+            else None
+        )
+
+        targets = json.loads(
+            job["reminder_targets"] or "[]"
+        )
+
+        if (
+            not settings
+            or not pending_targets(
+                settings,
+                targets,
+            )
+        ):
+            # sent=2 means cancelled, not delivered.
+            connection.execute("""
+                UPDATE push_jobs
+                SET sent = 2
+                WHERE token_hash = ?
+                  AND job_key = ?
+                  AND sent = 0
+            """, (
+                job["token_hash"],
+                job["job_key"],
+            ))
+
+            return None
+
+    old_payload = json.loads(
+        job["payload"]
+    )
+
+    payload = notification_payload(
+        settings["language"],
+        False,
+        job["job_key"],
+    )
+
+    number = old_payload.get(
+        "reminderNumber",
+        1,
+    )
+
+    payload["reminderNumber"] = number
+    payload["reminderTotal"] = REMINDER_COUNT
+
+    if settings["language"] == "my":
+        payload["body"] += (
+            f" ({number}/{REMINDER_COUNT}) "
+            "သောက်ပြီးပါက စာရင်းတွင် မှတ်တမ်းတင်ပါ။"
+        )
+    else:
+        payload["body"] += (
+            f" ({number}/{REMINDER_COUNT}) "
+            "Mark the dose taken to stop reminders."
+        )
+
+    return json.dumps(
+        payload,
+        ensure_ascii=False,
+    )
+
+
 def deliver_pending_jobs():
-    now = time.time()
+    now = current_time()
 
     with database() as connection:
         jobs = connection.execute("""
@@ -453,9 +760,21 @@ def deliver_pending_jobs():
               AND expires_at > ?
             ORDER BY due_at
             LIMIT 50
-        """, (now, now, now)).fetchall()
+        """, (
+            now,
+            now,
+            now,
+        )).fetchall()
 
     for job in jobs:
+        data = job["payload"]
+
+        if job["kind"] == "reminder":
+            data = prepare_reminder(job)
+
+            if data is None:
+                continue
+
         with database() as connection:
             reservation = connection.execute("""
                 UPDATE push_jobs
@@ -468,11 +787,11 @@ def deliver_pending_jobs():
                   AND next_try <= ?
                   AND expires_at > ?
             """, (
-                time.time() + 20,
+                current_time() + 20,
                 job["token_hash"],
                 job["job_key"],
-                time.time(),
-                time.time(),
+                current_time(),
+                current_time(),
             ))
 
             if reservation.rowcount != 1:
@@ -480,7 +799,8 @@ def deliver_pending_jobs():
 
         try:
             remaining_seconds = int(
-                job["expires_at"] - time.time()
+                job["expires_at"]
+                - current_time()
             )
 
             if remaining_seconds <= 0:
@@ -490,10 +810,18 @@ def deliver_pending_jobs():
                 subscription_info=json.loads(
                     job["subscription"]
                 ),
-                data=job["payload"],
+                data=data,
                 vapid_private_key=PRIVATE_KEY,
-                vapid_claims={"sub": SUBJECT},
-                ttl=min(60, remaining_seconds),
+                vapid_claims={
+                    "sub": SUBJECT,
+                },
+                ttl=max(
+                    1,
+                    min(60, remaining_seconds),
+                ),
+                headers={
+                    "Urgency": "high",
+                },
                 timeout=10,
             )
 
@@ -501,13 +829,18 @@ def deliver_pending_jobs():
                 connection.execute("""
                     UPDATE push_jobs
                     SET sent = 1
-                    WHERE token_hash = ? AND job_key = ?
+                    WHERE token_hash = ?
+                      AND job_key = ?
                 """, (
                     job["token_hash"],
                     job["job_key"],
                 ))
 
-            logger.info("Push accepted by the push service.")
+            # Accepted by the push service is not proof that
+            # the user has seen the notification.
+            logger.info(
+                "Push accepted by the push service."
+            )
 
         except WebPushException as error:
             code = (
@@ -518,10 +851,12 @@ def deliver_pending_jobs():
 
             if code in (404, 410):
                 with database() as connection:
-                    connection.execute(
-                        "DELETE FROM devices WHERE token_hash = ?",
-                        (job["token_hash"],),
-                    )
+                    connection.execute("""
+                        DELETE FROM devices
+                        WHERE token_hash = ?
+                    """, (
+                        job["token_hash"],
+                    ))
 
             logger.warning(
                 "Push failed; HTTP status=%s",
@@ -536,20 +871,30 @@ def deliver_pending_jobs():
 
 
 def scheduler_tick():
+    with REMINDER_LOCK:
+        _scheduler_tick()
+
+
+def _scheduler_tick():
     enqueue_due_reminders()
     deliver_pending_jobs()
 
     with database() as connection:
-        connection.execute(
-            "DELETE FROM push_jobs WHERE expires_at < ?",
-            (time.time() - 7 * 86400,),
-        )
+        connection.execute("""
+            DELETE FROM push_jobs
+            WHERE expires_at < ?
+        """, (
+            current_time() - 7 * 86400,
+        ))
 
 
 async def scheduler_loop():
     while True:
         try:
-            await asyncio.to_thread(scheduler_tick)
+            await asyncio.to_thread(
+                scheduler_tick
+            )
+
         except Exception as error:
             logger.warning(
                 "Scheduler error: %s",
@@ -561,7 +906,9 @@ async def scheduler_loop():
 
 @asynccontextmanager
 async def lifespan(app):
-    task = asyncio.create_task(scheduler_loop())
+    task = asyncio.create_task(
+        scheduler_loop()
+    )
 
     try:
         yield
@@ -584,10 +931,23 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[ORIGIN],
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+    ],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "ngrok-skip-browser-warning",
+    ],
 )
 
+
+# --------------------------------------------------
+# Health and public configuration
+# --------------------------------------------------
 
 @app.get("/health")
 def health():
@@ -599,8 +959,14 @@ def health():
 
 @app.get("/config")
 def config():
-    return {"publicKey": PUBLIC_KEY}
+    return {
+        "publicKey": PUBLIC_KEY,
+    }
 
+
+# --------------------------------------------------
+# Register a browser/device subscription
+# --------------------------------------------------
 
 @app.post("/subscription")
 def subscribe(
@@ -611,15 +977,22 @@ def subscribe(
     validate_subscription(subscription)
 
     with database() as connection:
-        existing = connection.execute(
-            "SELECT token_hash FROM devices WHERE endpoint = ?",
-            (subscription.endpoint,),
-        ).fetchone()
+        existing = connection.execute("""
+            SELECT token_hash
+            FROM devices
+            WHERE endpoint = ?
+        """, (
+            subscription.endpoint,
+        )).fetchone()
 
-        if existing and existing["token_hash"] != owner:
+        if (
+            existing
+            and existing["token_hash"] != owner
+        ):
             raise HTTPException(
                 409,
-                "This browser subscription is registered to another device token."
+                "This browser subscription is registered "
+                "to another device token.",
             )
 
         connection.execute("""
@@ -635,11 +1008,19 @@ def subscribe(
         """, (
             owner,
             subscription.endpoint,
-            json.dumps(subscription.model_dump()),
+            json.dumps(
+                subscription.model_dump()
+            ),
         ))
 
-    return {"ok": True}
+    return {
+        "ok": True,
+    }
 
+
+# --------------------------------------------------
+# Save medicine schedules and taken records
+# --------------------------------------------------
 
 @app.put("/reminders")
 def save_reminders(
@@ -648,20 +1029,26 @@ def save_reminders(
 ):
     owner = device_hash(authorization)
 
-    with database() as connection:
-        existing = connection.execute(
-            "SELECT 1 FROM devices WHERE token_hash = ?",
-            (owner,),
-        ).fetchone()
+    with REMINDER_LOCK, database() as connection:
+        existing = connection.execute("""
+            SELECT 1
+            FROM devices
+            WHERE token_hash = ?
+        """, (
+            owner,
+        )).fetchone()
 
         if not existing:
             raise HTTPException(
                 404,
-                "Connect this device first."
+                "Connect this device first.",
             )
 
         connection.execute("""
-            INSERT INTO schedules (token_hash, payload)
+            INSERT INTO schedules (
+                token_hash,
+                payload
+            )
             VALUES (?, ?)
             ON CONFLICT(token_hash) DO UPDATE SET
                 payload = excluded.payload
@@ -670,17 +1057,21 @@ def save_reminders(
             settings.model_dump_json(),
         ))
 
-        # Cancel pending reminders from the old schedule.
-        # Preserve accepted deliveries to prevent ordinary duplicates.
-        connection.execute("""
-            DELETE FROM push_jobs
-            WHERE token_hash = ?
-              AND kind = 'reminder'
-              AND sent = 0
-        """, (owner,))
+        # Preserve job identities. Repeated Save clicks must
+        # not restart the same reminder series.
+        #
+        # Pending jobs are checked against this latest payload
+        # immediately before delivery. Taken, deleted, and
+        # rescheduled doses are excluded.
 
-    return {"ok": True}
+    return {
+        "ok": True,
+    }
 
+
+# --------------------------------------------------
+# Separate 15-second server test
+# --------------------------------------------------
 
 @app.post("/test")
 def test_push(
@@ -691,15 +1082,18 @@ def test_push(
     now = time.time()
 
     with database() as connection:
-        existing = connection.execute(
-            "SELECT 1 FROM devices WHERE token_hash = ?",
-            (owner,),
-        ).fetchone()
+        existing = connection.execute("""
+            SELECT 1
+            FROM devices
+            WHERE token_hash = ?
+        """, (
+            owner,
+        )).fetchone()
 
         if not existing:
             raise HTTPException(
                 404,
-                "Connect this device first."
+                "Connect this device first.",
             )
 
         reservation = connection.execute("""
@@ -716,10 +1110,12 @@ def test_push(
         if reservation.rowcount != 1:
             raise HTTPException(
                 429,
-                "Wait 30 seconds before another test."
+                "Wait 30 seconds before another test.",
             )
 
-        job_key = f"test:{time.time_ns()}"
+        job_key = (
+            f"test:{time.time_ns()}"
+        )
 
         payload = notification_payload(
             request.language,
@@ -742,7 +1138,10 @@ def test_push(
             owner,
             job_key,
             "test",
-            json.dumps(payload, ensure_ascii=False),
+            json.dumps(
+                payload,
+                ensure_ascii=False,
+            ),
             now + 15,
             now + 135,
             now + 15,
@@ -754,17 +1153,26 @@ def test_push(
     }
 
 
+# --------------------------------------------------
+# Disable reminders for this browser/device
+# --------------------------------------------------
+
 @app.delete("/subscription")
 def disconnect(
     authorization: str = Header(default=""),
 ):
     owner = device_hash(authorization)
 
-    with database() as connection:
-        # Foreign keys also remove this device's schedules and jobs.
-        connection.execute(
-            "DELETE FROM devices WHERE token_hash = ?",
-            (owner,),
-        )
+    with REMINDER_LOCK, database() as connection:
+        # Foreign keys remove the device's schedules
+        # and pending jobs as well.
+        connection.execute("""
+            DELETE FROM devices
+            WHERE token_hash = ?
+        """, (
+            owner,
+        ))
 
-    return {"ok": True}
+    return {
+        "ok": True,
+    }

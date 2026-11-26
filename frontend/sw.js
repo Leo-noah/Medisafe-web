@@ -1,25 +1,76 @@
 "use strict";
 
-/*
-  A notification click opens My Medicine.
+self.addEventListener("install", event => {
+  event.waitUntil(
+    self.skipWaiting()
+  );
+});
 
-  No caching or scheduled alarms are configured in this file yet.
-*/
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    self.clients.claim()
+  );
+});
+
+self.addEventListener("push", event => {
+  event.waitUntil(
+    (async () => {
+      let payload = {};
+
+      try {
+        const data = event.data?.json();
+
+        if (
+          data &&
+          typeof data === "object" &&
+          !Array.isArray(data)
+        ) {
+          payload = data;
+        }
+      } catch {
+        // Show a generic notification if payload parsing fails.
+      }
+
+      const title =
+        typeof payload.title === "string"
+          ? payload.title.slice(0, 120)
+          : "MediSafe";
+
+      const body =
+        typeof payload.body === "string"
+          ? payload.body.slice(0, 400)
+          : "Open My Medicine to review your schedule.";
+
+      // Each push creates a fresh notification.
+      await self.registration.showNotification(
+        title,
+        {
+          body,
+          lang:
+            payload.language === "my"
+              ? "my"
+              : "en"
+        }
+      );
+    })()
+  );
+});
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
 
-  const destination = new URL(
-    "./my-medicines.html",
-    self.registration.scope
-  );
-
   event.waitUntil(
     (async () => {
-      const windows = await self.clients.matchAll({
-        type: "window",
-        includeUncontrolled: true
-      });
+      const destination = new URL(
+        "./my-medicines.html",
+        self.registration.scope
+      );
+
+      const windows =
+        await self.clients.matchAll({
+          type: "window",
+          includeUncontrolled: true
+        });
 
       const existing = windows.find(client => {
         const url = new URL(client.url);
@@ -34,40 +85,9 @@ self.addEventListener("notificationclick", event => {
         return existing.focus();
       }
 
-      return self.clients.openWindow(destination.href);
-    })()
-  );
-});
-self.addEventListener("push", event => {
-  event.waitUntil(
-    (async () => {
-      let payload = {};
-
-      try {
-       const data = event.data?.json();
-
-payload =
-  data && typeof data === "object" && !Array.isArray(data)
-    ? data
-    : {};
-      } catch {
-        // Display a generic message if the payload cannot be read.
-      }
-
-      const title =
-        typeof payload.title === "string"
-          ? payload.title.slice(0, 120)
-          : "MediSafe";
-
-      const body =
-        typeof payload.body === "string"
-          ? payload.body.slice(0, 400)
-          : "You have a new notification.";
-
-      await self.registration.showNotification(title, {
-        body,
-        lang: payload.language === "my" ? "my" : "en"
-      });
+      return self.clients.openWindow(
+        destination.href
+      );
     })()
   );
 });
