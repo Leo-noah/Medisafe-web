@@ -66,9 +66,6 @@ payload =
 
       await self.registration.showNotification(title, {
         body,
-        tag: typeof payload.tag === "string"
-  ? payload.tag.slice(0, 100)
-  : "medisafe-notification",
         lang: payload.language === "my" ? "my" : "en"
       });
     })()
