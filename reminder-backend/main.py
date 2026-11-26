@@ -228,6 +228,11 @@ class TestRequest(BaseModel):
 
 
 class MedicineReminder(BaseModel):
+    name: str = Field(default="", max_length=300)
+    nameEn: str = Field(default="", max_length=300)
+    nameMy: str = Field(default="", max_length=300)
+    dose: str = Field(default="", max_length=300)
+
     id: str = Field(
         min_length=1,
         max_length=100,
@@ -687,13 +692,9 @@ def prepare_reminder(job):
             job["reminder_targets"] or "[]"
         )
 
-        if (
-            not settings
-            or not pending_targets(
-                settings,
-                targets,
-            )
-        ):
+        remaining = pending_targets(settings, targets) if settings else []
+
+        if not remaining:
             # sent=2 means cancelled, not delivered.
             connection.execute("""
                 UPDATE push_jobs
@@ -726,16 +727,57 @@ def prepare_reminder(job):
     payload["reminderNumber"] = number
     payload["reminderTotal"] = REMINDER_COUNT
 
-    if settings["language"] == "my":
-        payload["body"] += (
-            f" ({number}/{REMINDER_COUNT}) "
-            "သောက်ပြီးပါက စာရင်းတွင် မှတ်တမ်းတင်ပါ။"
+    my = settings["language"] == "my"
+    medicines = {medicine["id"]: medicine for medicine in settings["medicines"]}
+
+    def one_line(value, limit):
+        text = " ".join(str(value or "").split())
+        return text if len(text) <= limit else text[:limit - 1] + "…"
+
+    lines = []
+    seen = set()
+    for target in remaining:
+        medicine_id = target["medicineId"]
+        if medicine_id in seen:
+            continue
+        seen.add(medicine_id)
+        medicine = medicines[medicine_id]
+        name = (
+            medicine.get("nameMy" if my else "nameEn")
+            or medicine.get("name")
+            or ("သောက်ရမည့်ဆေး" if my else "Your scheduled medicine")
         )
-    else:
-        payload["body"] += (
-            f" ({number}/{REMINDER_COUNT}) "
-            "Mark the dose taken to stop reminders."
+        name = one_line(name, 48)
+        dose = one_line(medicine.get("dose"), 24)
+        lines.append(f"{name} — {dose}" if dose else name)
+
+    scheduled = remaining[0]["time"]
+    payload["title"] = (
+        "MediSafe · ဆေးသောက်ချိန်ရောက်ပါပြီ"
+        if my else "MediSafe · Time for your medicine"
+    )
+    footer = (
+        f"ဆေးသောက်ချိန် — {scheduled}\n"
+        f"သတိပေးချက် {number}/{REMINDER_COUNT} · သောက်ပြီးပါက မှတ်ပါ။"
+        if my else
+        f"Scheduled time — {scheduled}\n"
+        f"Reminder {number}/{REMINDER_COUNT} · Mark taken after taking."
+    )
+
+    # Leave room for the footer and the service worker's 400-unit limit.
+    shown = min(3, len(lines))
+    while True:
+        extra = len(lines) - shown
+        more = (
+            f"နောက်ထပ် {extra} မျိုး — ဆေးစာရင်းကို ဖွင့်ကြည့်ပါ။"
+            if my else f"+{extra} more — open My Medicine."
         )
+        parts = lines[:shown] + ([more] if extra else []) + [footer]
+        body = "\n".join(parts)
+        if len(body.encode("utf-16-le", errors="replace")) // 2 <= 380 or shown == 0:
+            break
+        shown -= 1
+    payload["body"] = body
 
     return json.dumps(
         payload,

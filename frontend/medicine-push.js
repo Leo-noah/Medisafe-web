@@ -87,9 +87,7 @@
   let connected = false;
   let deviceToken = "";
   let formSubmitting = false;
-
   let queue = Promise.resolve();
-
   let statusKey = "";
   let statusError = false;
 
@@ -106,10 +104,7 @@
       ? text()[statusKey]
       : "";
 
-    status.classList.toggle(
-      "is-error",
-      statusError
-    );
+    status.classList.toggle("is-error", statusError);
   }
 
   function message(key, error = false) {
@@ -127,17 +122,96 @@
     );
   }
 
+  // Bilingual names for notification content.
+  const notificationNames = new Map();
+
+  const nameKey = value =>
+    String(value || "")
+      .normalize("NFC")
+      .trim()
+      .toLowerCase();
+
+  const shortNotificationText = value =>
+    Array.from(value).slice(0, 300).join("");
+
+  function indexNotificationName(entry) {
+    if (
+      typeof entry.generic_name_en !== "string" ||
+      typeof entry.generic_name_my !== "string"
+    ) {
+      return;
+    }
+
+    const names = {
+      en: entry.generic_name_en,
+      my: entry.generic_name_my
+    };
+
+    [names.en, names.my].forEach(name => {
+      notificationNames.set(nameKey(name), names);
+    });
+  }
+
+  // These names remain available if the catalogue cannot load.
+  indexNotificationName({
+    generic_name_en: "Paracetamol",
+    generic_name_my: "ပါရာစီတမော"
+  });
+
+  indexNotificationName({
+    generic_name_en: "Ibuprofen",
+    generic_name_my: "အိုင်ဗျူပရိုဖန်"
+  });
+
+  let cataloguePromise;
+
+  function loadNotificationNames() {
+    if (!cataloguePromise) {
+      const controller = new AbortController();
+
+      const timeout = setTimeout(
+        () => controller.abort(),
+        5000
+      );
+
+      cataloguePromise = fetch(
+        new URL(
+          "./data/myanmar-200-general-information-audio-prelinked.json",
+          document.baseURI
+        ),
+        { signal: controller.signal }
+      )
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Name catalogue unavailable");
+          }
+
+          return response.json();
+        })
+        .then(data => {
+          const entries = Array.isArray(data)
+            ? data
+            : data.medicines;
+
+          if (Array.isArray(entries)) {
+            entries.forEach(indexNotificationName);
+          }
+        })
+        .catch(() => {
+          // Unknown names retain the user's original spelling.
+        })
+        .finally(() => clearTimeout(timeout));
+    }
+
+    return cataloguePromise;
+  }
+
   function buildPayload() {
-    const raw = localStorage.getItem(
-      MEDICINES_KEY
-    );
+    const raw = localStorage.getItem(MEDICINES_KEY);
 
     const saved = raw
       ? JSON.parse(raw)
-      : {
-          medicines: [],
-          logs: []
-        };
+      : { medicines: [], logs: [] };
 
     if (
       typeof validStoredData !== "function" ||
@@ -153,12 +227,25 @@
           : "en",
 
       timezone:
-        Intl.DateTimeFormat()
-          .resolvedOptions()
-          .timeZone,
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
 
       medicines: saved.medicines.map(medicine => ({
         id: medicine.id,
+
+        name: shortNotificationText(medicine.name),
+
+        nameEn: shortNotificationText(
+          notificationNames.get(nameKey(medicine.name))?.en ||
+          medicine.name
+        ),
+
+        nameMy: shortNotificationText(
+          notificationNames.get(nameKey(medicine.name))?.my ||
+          medicine.name
+        ),
+
+        dose: shortNotificationText(medicine.dose),
+
         startDate: medicine.startDate,
         endDate: medicine.endDate || null,
         times: [...new Set(medicine.times)]
@@ -173,9 +260,7 @@
   }
 
   function getToken() {
-    let value = localStorage.getItem(
-      TOKEN_KEY
-    );
+    let value = localStorage.getItem(TOKEN_KEY);
 
     if (value === null) {
       const bytes = crypto.getRandomValues(
@@ -184,14 +269,10 @@
 
       value = Array.from(
         bytes,
-        byte =>
-          byte.toString(16).padStart(2, "0")
+        byte => byte.toString(16).padStart(2, "0")
       ).join("");
 
-      localStorage.setItem(
-        TOKEN_KEY,
-        value
-      );
+      localStorage.setItem(TOKEN_KEY, value);
     }
 
     if (!/^[a-f0-9]{64}$/.test(value)) {
@@ -202,53 +283,37 @@
   }
 
   function publicKeyBytes(value) {
-    if (
-      typeof value !== "string" ||
-      !value
-    ) {
+    if (typeof value !== "string" || !value) {
       throw new Error(text().server);
     }
 
     const padded =
-      value +
-      "=".repeat(
-        (4 - value.length % 4) % 4
-      );
+      value + "=".repeat((4 - value.length % 4) % 4);
 
     const decoded = atob(
-      padded
-        .replace(/-/g, "+")
-        .replace(/_/g, "/")
+      padded.replace(/-/g, "+").replace(/_/g, "/")
     );
 
     return Uint8Array.from(
       decoded,
-      character =>
-        character.charCodeAt(0)
+      character => character.charCodeAt(0)
     );
   }
 
-  async function request(
-    path,
-    method = "GET",
-    body
-  ) {
+  async function request(path, method = "GET", body) {
     const headers = {
       "ngrok-skip-browser-warning": "1"
     };
 
     if (deviceToken) {
-      headers.Authorization =
-        `Bearer ${deviceToken}`;
+      headers.Authorization = `Bearer ${deviceToken}`;
     }
 
     if (body !== undefined) {
-      headers["Content-Type"] =
-        "application/json";
+      headers["Content-Type"] = "application/json";
     }
 
-    const controller =
-      new AbortController();
+    const controller = new AbortController();
 
     const timeout = setTimeout(
       () => controller.abort(),
@@ -262,7 +327,6 @@
           method,
           headers,
           signal: controller.signal,
-
           body:
             body === undefined
               ? undefined
@@ -270,9 +334,7 @@
         }
       );
 
-      const payload = await response
-        .json()
-        .catch(() => null);
+      const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
         const detail = payload?.detail;
@@ -284,10 +346,7 @@
         );
       }
 
-      if (
-        !payload ||
-        typeof payload !== "object"
-      ) {
+      if (!payload || typeof payload !== "object") {
         throw new Error(text().server);
       }
 
@@ -306,27 +365,19 @@
       new URL("./sw.js", document.baseURI)
     );
 
-    const registration =
-      await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.ready;
 
-    const config = await request(
-      "/config"
-    );
-
-    const expectedKey = publicKeyBytes(
-      config.publicKey
-    );
+    const config = await request("/config");
+    const expectedKey = publicKeyBytes(config.publicKey);
 
     let subscription =
-      await registration.pushManager
-        .getSubscription();
+      await registration.pushManager.getSubscription();
 
     if (!subscription) {
-      subscription =
-        await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: expectedKey
-        });
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: expectedKey
+      });
     } else if (
       subscription.options.applicationServerKey
     ) {
@@ -337,8 +388,7 @@
       const matches =
         existing.length === expectedKey.length &&
         existing.every(
-          (byte, index) =>
-            byte === expectedKey[index]
+          (byte, index) => byte === expectedKey[index]
         );
 
       if (!matches) {
@@ -355,9 +405,7 @@
     connected = true;
   }
 
-  function syncReminders(
-    permissionRequest = null
-  ) {
+  function syncReminders(permissionRequest = null) {
     const operation = queue
       .catch(() => {})
       .then(async () => {
@@ -371,36 +419,29 @@
             return;
           }
 
-          if (
-            Notification.permission === "denied"
-          ) {
+          if (Notification.permission === "denied") {
             message("denied", true);
             return;
           }
 
-          if (
-            Notification.permission !== "granted"
-          ) {
+          if (Notification.permission !== "granted") {
             message("permission");
             return;
           }
 
+          await loadNotificationNames();
+
+          // Read the latest records after waiting for the catalogue.
           const payload = buildPayload();
 
           message("saving");
 
           await ensureConnection();
 
-          await request(
-            "/reminders",
-            "PUT",
-            payload
-          );
+          await request("/reminders", "PUT", payload);
 
           message(
-            payload.medicines.length
-              ? "saved"
-              : "empty"
+            payload.medicines.length ? "saved" : "empty"
           );
         } catch (error) {
           connected = false;
@@ -418,10 +459,7 @@
     return operation;
   }
 
-  /*
-   * Capture phase runs before the existing synchronous
-   * medicine-form submit handler.
-   */
+  // Capture the Save gesture before the existing form handler.
   form.addEventListener(
     "submit",
     () => {
@@ -434,46 +472,32 @@
     true
   );
 
-  /*
-   * Existing persist() emits this after a successful save.
-   * Save medicine, Save changes, delete, and Mark taken
-   * all use the same synchronization path.
-   */
+  // Save, edit, delete, individual taken and Mark all taken
+  // synchronize through the existing persist() event.
   window.addEventListener(
     "medisafe:medicines-updated",
     () => {
       let permissionRequest = null;
 
       try {
-        localStorage.setItem(
-          ENABLED_KEY,
-          "true"
-        );
+        localStorage.setItem(ENABLED_KEY, "true");
 
-        /*
-         * Request permission directly in the Save gesture.
-         * Never request permission during page refresh.
-         */
+        // Request permission only in the Save gesture.
         if (
           formSubmitting &&
           supported() &&
           Notification.permission === "default"
         ) {
-          permissionRequest =
-            Notification.requestPermission()
-              .catch(error => {
-                console.error(
-                  "Notification permission request failed:",
-                  error
-                );
-              });
+          permissionRequest = Notification.requestPermission()
+            .catch(error => {
+              console.error(
+                "Notification permission request failed:",
+                error
+              );
+            });
         }
       } catch (error) {
-        console.error(
-          "Reminder setup failed:",
-          error
-        );
-
+        console.error("Reminder setup failed:", error);
         message("failed", true);
         return;
       }
@@ -489,74 +513,47 @@
       const payload = buildPayload();
 
       const wasEnabled =
-        localStorage.getItem(
-          ENABLED_KEY
-        ) === "true";
+        localStorage.getItem(ENABLED_KEY) === "true";
 
-      if (
-        !wasEnabled &&
-        payload.medicines.length === 0
-      ) {
+      if (!wasEnabled && payload.medicines.length === 0) {
         return;
       }
 
-      if (
-        Notification.permission !== "granted"
-      ) {
+      // Refresh never opens a notification permission prompt.
+      if (Notification.permission !== "granted") {
         return;
       }
 
-      localStorage.setItem(
-        ENABLED_KEY,
-        "true"
-      );
+      localStorage.setItem(ENABLED_KEY, "true");
 
       syncReminders();
     } catch (error) {
-      console.error(
-        "Reminder restore failed:",
-        error
-      );
-
+      console.error("Reminder restore failed:", error);
       message("invalid", true);
     }
   }
 
-  window.addEventListener(
-    "online",
-    restoreReminders
-  );
+  window.addEventListener("online", restoreReminders);
 
-  window.addEventListener(
-    "storage",
-    event => {
-      if (
-        event.key === MEDICINES_KEY
-      ) {
-        restoreReminders();
-      }
+  window.addEventListener("storage", event => {
+    if (event.key === MEDICINES_KEY) {
+      restoreReminders();
     }
-  );
+  });
 
-  document.addEventListener(
-    "visibilitychange",
-    () => {
-      if (!document.hidden) {
-        restoreReminders();
-      }
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      restoreReminders();
     }
-  );
+  });
 
   new MutationObserver(() => {
     renderStatus();
     restoreReminders();
-  }).observe(
-    document.documentElement,
-    {
-      attributes: true,
-      attributeFilter: ["lang"]
-    }
-  );
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["lang"]
+  });
 
   restoreReminders();
 })();

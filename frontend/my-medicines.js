@@ -521,108 +521,310 @@ function renderProgress() {
   document.getElementById("today-date").textContent = formatDate(todayKey());
 }
 
+const medicineDisplayNames = new Map();
+
+function normaliseMedicineName(value) {
+  return String(value || "")
+    .normalize("NFC")
+    .trim()
+    .toLowerCase();
+}
+
+function addDisplayName(entry) {
+  const en = entry.generic_name_en;
+  const my = entry.generic_name_my;
+
+  if (typeof en !== "string" || typeof my !== "string") {
+    return;
+  }
+
+  [en, my].forEach(name => {
+    medicineDisplayNames.set(
+      normaliseMedicineName(name),
+      { en, my }
+    );
+  });
+}
+
+// Available immediately, before the catalogue finishes loading.
+addDisplayName({
+  generic_name_en: "Paracetamol",
+  generic_name_my: "ပါရာစီတမော"
+});
+
+addDisplayName({
+  generic_name_en: "Ibuprofen",
+  generic_name_my: "အိုင်ဗျူပရိုဖန်"
+});
+
+function displayMedicineName(medicine) {
+  const names = medicineDisplayNames.get(
+    normaliseMedicineName(medicine.name)
+  );
+
+  return names
+    ? names[language] || medicine.name
+    : medicine.name;
+}
+
+function groupMedicinesByTime(medicines) {
+  const groups = new Map();
+
+  medicines.forEach(medicine => {
+    [...new Set(medicine.times)].forEach(time => {
+      if (!groups.has(time)) {
+        groups.set(time, []);
+      }
+
+      groups.get(time).push(medicine);
+    });
+  });
+
+  return [...groups.entries()].sort(
+    ([a], [b]) => a.localeCompare(b)
+  );
+}
+
+function medicineDateRange(medicine) {
+  return (
+    `${formatDate(medicine.startDate)} — ` +
+    (
+      medicine.endDate
+        ? formatDate(medicine.endDate)
+        : t("noEndDate")
+    )
+  );
+}
+function markGroupTaken(time) {
+  const date = todayKey();
+
+  const pending = state.medicines.filter(medicine =>
+    activeToday(medicine) &&
+    medicine.times.includes(time) &&
+    !takenToday(medicine.id, time)
+  );
+
+  if (!pending.length) return;
+
+  const takenAt = new Date().toISOString();
+
+  const logs = [
+    ...state.logs,
+    ...pending.map(medicine => ({
+      medicineId: medicine.id,
+      date,
+      time,
+      takenAt,
+      medicineName: medicine.name,
+      dose: medicine.dose
+    }))
+  ];
+
+  if (persist({ medicines: state.medicines, logs })) {
+    renderList();
+    showStatus("changed");
+  }
+}
 function renderList() {
   list.replaceChildren();
 
-  document.getElementById("empty-state").hidden = state.medicines.length !== 0;
+  document.getElementById("empty-state").hidden =
+    state.medicines.length !== 0;
 
-  document.getElementById("medicine-count").textContent = new Intl.NumberFormat(
-    language === "my" ? "my-MM" : "en",
-  ).format(state.medicines.length);
+  document.getElementById("medicine-count").textContent =
+    new Intl.NumberFormat(
+      language === "my" ? "my-MM" : "en"
+    ).format(state.medicines.length);
 
-  state.medicines.forEach((medicine) => {
+  const groups = groupMedicinesByTime(state.medicines);
+
+  groups.forEach(([time, medicines]) => {
     const card = document.createElement("article");
-    card.className = "medicine-card";
+    card.className = "medicine-card grouped-medicine-card";
 
-    const heading = document.createElement("div");
-    heading.className = "card-heading";
-
-    const info = document.createElement("div");
-
-    const title = document.createElement("h3");
-    title.textContent = medicine.name;
-
-    const dose = document.createElement("p");
-    dose.className = "card-dose";
-    dose.textContent = medicine.dose;
-
-    info.append(title, dose);
-
-    const actions = document.createElement("div");
-    actions.className = "card-actions";
-
-    actions.append(
-      makeButton("edit", () => editMedicine(medicine)),
-      makeButton("delete", () => deleteMedicine(medicine.id), "delete"),
+    const sameDates = medicines.every(medicine =>
+      medicine.startDate === medicines[0].startDate &&
+      medicine.endDate === medicines[0].endDate
     );
 
-    heading.append(info, actions);
-    card.append(heading);
+    medicines.forEach(medicine => {
+      const item = document.createElement("section");
+      item.className = "grouped-medicine-item";
 
-    const dates = document.createElement("p");
-    dates.className = "card-dates";
+      const heading = document.createElement("div");
+      heading.className = "card-heading";
 
-    dates.textContent =
-      `${formatDate(medicine.startDate)} — ` +
-      (medicine.endDate ? formatDate(medicine.endDate) : t("noEndDate"));
+      const info = document.createElement("div");
+info.className = "grouped-medicine-info";
 
-    card.append(dates);
+const title = document.createElement("h3");
+title.textContent = displayMedicineName(medicine);
 
-    if (medicine.notes) {
-      const notes = document.createElement("p");
-      notes.className = "card-notes";
-      notes.textContent = medicine.notes;
+const dose = document.createElement("p");
+dose.className = "card-dose";
+dose.textContent = medicine.dose;
 
-      card.append(notes);
-    }
+info.append(title, dose);
 
-    if (activeToday(medicine)) {
-      const doseList = document.createElement("div");
-      doseList.className = "dose-list";
+      const actions = document.createElement("div");
+      actions.className = "card-actions";
 
-      medicine.times.forEach((time) => {
-        const row = document.createElement("div");
-        row.className = "dose-row";
-
-        const timeLabel = document.createElement("span");
-        timeLabel.className = "dose-time";
-        timeLabel.textContent = time;
-
-        const taken = takenToday(medicine.id, time);
-
-        const button = makeButton(
-          taken ? "taken" : "markTaken",
-          () => toggleTaken(medicine, time),
-          "taken-button",
-        );
-
-        button.setAttribute("aria-pressed", String(taken));
-        button.setAttribute(
-          "aria-label",
-          `${medicine.name}, ${time}: ${t(taken ? "taken" : "markTaken")}`,
-        );
-
-        row.append(timeLabel, button);
-        doseList.append(row);
-      });
-
-      card.append(doseList);
-    } else {
-      const note = document.createElement("p");
-      note.className = "inactive-note";
-
-      note.textContent = t(
-        medicine.startDate > todayKey() ? "notStarted" : "finished",
+      actions.append(
+        makeButton(
+          "edit",
+          () => editMedicine(medicine)
+        ),
+        makeButton(
+          "delete",
+          () => deleteMedicine(medicine.id),
+          "delete"
+        )
       );
 
-      card.append(note);
+      heading.append(info, actions);
+      item.append(heading);
+
+      // Different date ranges: show each medicine's own dates.
+      if (!sameDates) {
+        const dates = document.createElement("p");
+        dates.className = "card-dates";
+        dates.textContent = medicineDateRange(medicine);
+        item.append(dates);
+      }
+
+      if (medicine.notes) {
+        const notes = document.createElement("p");
+        notes.className = "card-notes";
+        notes.textContent = medicine.notes;
+        item.append(notes);
+      }
+
+      if (activeToday(medicine)) {
+        const taken = takenToday(medicine.id, time);
+
+        const action = makeButton(
+          taken ? "taken" : "markTaken",
+          () => toggleTaken(medicine, time),
+          "taken-button"
+        );
+
+        action.setAttribute(
+          "aria-pressed",
+          String(taken)
+        );
+
+        action.setAttribute(
+          "aria-label",
+          `${displayMedicineName(medicine)}, ` +
+          `${medicine.dose}, ${time}: ` +
+          t(taken ? "taken" : "markTaken")
+        );
+
+        item.append(action);
+      } else {
+        const note = document.createElement("p");
+        note.className = "inactive-note";
+
+        note.textContent = t(
+          medicine.startDate > todayKey()
+            ? "notStarted"
+            : "finished"
+        );
+
+        item.append(note);
+      }
+
+      card.append(item);
+    });
+
+    // Identical date ranges: display once below all medicines.
+    if (sameDates) {
+      const dates = document.createElement("p");
+      dates.className = "card-dates grouped-shared-dates";
+      dates.textContent = medicineDateRange(medicines[0]);
+      card.append(dates);
     }
 
+    // Shared scheduled time always appears last.
+    const footer = document.createElement("div");
+    footer.className = "grouped-time";
+
+    const timeTitle = document.createElement("span");
+    timeTitle.textContent = t("timeLabel");
+
+    const timeValue = document.createElement("strong");
+    timeValue.textContent = time;
+
+    const timeInfo = document.createElement("div");
+timeInfo.className = "grouped-time-info";
+timeInfo.append(timeTitle, timeValue);
+
+const eligible = medicines.filter(activeToday);
+
+const allTaken =
+  eligible.length > 0 &&
+  eligible.every(medicine =>
+    takenToday(medicine.id, time)
+  );
+
+const markAll = makeButton(
+  "markTaken",
+  () => markGroupTaken(time),
+  "group-mark-taken"
+);
+
+markAll.textContent = language === "my"
+  ? (
+      allTaken
+        ? "အားလုံး သောက်ပြီးပါပြီ"
+        : "အားလုံး သောက်ပြီးမှတ်မည်"
+    )
+  : (
+      allTaken
+        ? "All taken"
+        : "Mark all taken"
+    );
+
+markAll.disabled = eligible.length === 0 || allTaken;
+
+markAll.setAttribute(
+  "aria-label",
+  `${time}: ${markAll.textContent}`
+);
+
+footer.append(timeInfo, markAll);
+    card.append(footer);
     list.append(card);
   });
 
   renderProgress();
 }
+
+// Load the existing bilingual generic-name catalogue.
+// Original saved names, doses and reminder records are preserved.
+fetch(
+  "./data/myanmar-200-general-information-audio-prelinked.json"
+)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Medicine names could not load.");
+    }
+
+    return response.json();
+  })
+  .then(data => {
+    const entries = Array.isArray(data)
+      ? data
+      : data.medicines;
+
+    if (!Array.isArray(entries)) return;
+
+    entries.forEach(addDisplayName);
+    renderList();
+  })
+  .catch(error => {
+    console.warn(error.message);
+  });
 
 function renderLanguage() {
   document.documentElement.lang = language;

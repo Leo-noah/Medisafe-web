@@ -1,373 +1,629 @@
-"use strict";
+(() => {
+  "use strict";
 
-const DEMO_OTP = "123456";
+  // Replace these values with your Firebase WEB APP configuration.
+  // Never put a service-account private key in frontend code.
+  const firebaseConfig = {
+    apiKey: "AIzaSyClfq1ihThvpzGFquNB91-23W-nLPoxe3M",
+    authDomain: "medisafe-58366.firebaseapp.com",
+    projectId: "medisafe-58366",
+    storageBucket: "medisafe-58366.firebasestorage.app",
+    messagingSenderId: "1073227216867",
+    appId: "1:1073227216867:web:413861d81a3bc26a00d2d6"
+  };
 
-/*
-  Frontend demonstration only.
-  Real OTP generation, sending, verification and sessions
-  must be implemented on a backend later.
-*/
+  const SDK_VERSION = "13.4.0";
 
-const translations = {
-  en: {
-    title: "MediSafe",
-    eyebrow: "YOUR MEDICINE COMPANION",
-    introTitle: "Understand your medicines. Make everyday care easier.",
-    introDescription:
-      "Explore medicine information without an account. " +
-      "Sign in when you want to keep your personal medicine list.",
-    feature: "English or Burmese. Your choice.",
-    footer: "Made for everyday care.",
-    previewBadge: "Frontend demo",
-    welcomeLabel: "WELCOME TO MEDISAFE",
-    welcome: "Start with what you need",
-    entryDescription:
-      "Browse first, or continue with your email or phone. No password needed.",
-    continueGuest: "Explore without an account",
-    guestDescription: "No sign-in needed to browse.",
-    or: "or keep your personal medicine list",
-    identifierLabel: "Email or Myanmar phone number",
-    identifierHelp: "For example: name@example.com or 09xxxxxxxxx",
-    identifierPlaceholder: "Email or 09xxxxxxxxx",
-    sendCode: "Continue with a code",
-    noPassword: "One contact method is enough. No password to remember.",
-    changeContact: "Change email or phone",
-    otpTitle: "Enter your code",
-    otpDescription: "Contact selected:",
-    demoCode: "Use this code for the frontend demo:",
-    otpLabel: "6-digit code",
-    verifyCode: "Continue",
-    resend: "Try the demo code again",
-    invalidContact: "Enter a valid email or Myanmar mobile number.",
-    invalidCode: "Enter the demo code: 123456.",
-    codeReset: "Demo code reset. Enter 123456.",
-    guestMode: "GUEST BROWSING",
-    demoMode: "OTP DEMO COMPLETED",
-    browseTitle: "Find a medicine",
-    browseDescription: "Search the sample medicine names below.",
-    searchLabel: "Medicine name",
-    searchPlaceholder: "Search in English or Burmese",
-    noResults: "No matching sample medicine.",
-    sampleNotice:
-      "This preview contains sample names only. Personal records and real account access are not connected.",
-    startOver: "Back to start",
-  },
+  const entry = document.getElementById("entry-screen");
+  const account = document.getElementById("account-screen");
 
-  my: {
-    title: "MediSafe",
-    eyebrow: "သင့်ဆေးဝါး စောင့်ရှောက်မှုအဖော်",
-    introTitle: "ဆေးဝါးအကြောင်း သိရှိပြီး နေ့စဉ်စောင့်ရှောက်မှုကို လွယ်ကူစေပါ။",
-    introDescription:
-      "အကောင့်မလိုဘဲ ဆေးဝါးအချက်အလက်ကို ကြည့်နိုင်ပါသည်။ " +
-      "ကိုယ်ပိုင်ဆေးစာရင်း သိမ်းချင်မှ အကောင့်ဝင်ပါ။",
-    feature: "အင်္ဂလိပ် သို့မဟုတ် မြန်မာ၊ သင်ရွေးချယ်နိုင်ပါသည်။",
-    footer: "နေ့စဉ်ကျန်းမာရေး စောင့်ရှောက်မှုအတွက်။",
-    previewBadge: "ရှေ့ပိုင်းဒီဇိုင်း စမ်းသပ်မှု",
-    welcomeLabel: "MEDISAFE မှ ကြိုဆိုပါသည်",
-    welcome: "သင်လိုအပ်ရာမှ စတင်ပါ",
-    entryDescription:
-      "အကောင့်မဝင်ဘဲ ကြည့်နိုင်သည်။ သို့မဟုတ် အီးမေးလ်၊ " +
-      "ဖုန်းနံပါတ်ဖြင့် ဆက်သုံးပါ။ စကားဝှက် မလိုပါ။",
-    continueGuest: "အကောင့်မဝင်ဘဲ ကြည့်မည်",
-    guestDescription: "ကြည့်ရှုရန် အကောင့်ဝင်စရာ မလိုပါ။",
-    or: "သို့မဟုတ် ကိုယ်ပိုင်ဆေးစာရင်း သိမ်းရန်",
-    identifierLabel: "အီးမေးလ် သို့မဟုတ် မြန်မာဖုန်းနံပါတ်",
-    identifierHelp: "ဥပမာ name@example.com သို့မဟုတ် 09xxxxxxxxx",
-    identifierPlaceholder: "အီးမေးလ် သို့မဟုတ် 09xxxxxxxxx",
-    sendCode: "အတည်ပြုကုဒ်ဖြင့် ဆက်မည်",
-    noPassword: "ဆက်သွယ်ရန်တစ်မျိုးသာ လိုပြီး စကားဝှက် မှတ်စရာမလိုပါ။",
-    changeContact: "အီးမေးလ် သို့မဟုတ် ဖုန်းနံပါတ် ပြင်မည်",
-    otpTitle: "ကုဒ်ဖြည့်ပါ",
-    otpDescription: "ရွေးထားသော ဆက်သွယ်ရန်လိပ်စာ -",
-    demoCode: "ဒီဇိုင်းစမ်းသပ်ရန် ဤကုဒ်ကို သုံးပါ -",
-    otpLabel: "ဂဏန်း ၆ လုံးပါ ကုဒ်",
-    verifyCode: "ဆက်မည်",
-    resend: "စမ်းသပ်ကုဒ်ဖြင့် ပြန်ကြိုးစားမည်",
-    invalidContact:
-      "မှန်ကန်သော အီးမေးလ် သို့မဟုတ် မြန်မာမိုဘိုင်းဖုန်းနံပါတ် ဖြည့်ပါ။",
-    invalidCode: "စမ်းသပ်ကုဒ် 123456 ကို ဖြည့်ပါ။",
-    codeReset: "စမ်းသပ်ကုဒ် ပြန်စထားပါပြီ။ 123456 ကို ဖြည့်ပါ။",
-    guestMode: "အကောင့်မဝင်ဘဲ ကြည့်ရှုခြင်း",
-    demoMode: "OTP စမ်းသပ်မှု ပြီးပါပြီ",
-    browseTitle: "ဆေးအမည် ရှာမည်",
-    browseDescription: "အောက်ပါ နမူနာဆေးအမည်များကို ရှာကြည့်ပါ။",
-    searchLabel: "ဆေးအမည်",
-    searchPlaceholder: "အင်္ဂလိပ် သို့မဟုတ် မြန်မာဖြင့် ရှာပါ",
-    noResults: "ကိုက်ညီသော နမူနာဆေးအမည် မတွေ့ပါ။",
-    sampleNotice:
-      "ဤစမ်းသပ်မှုတွင် နမူနာဆေးအမည်များသာ ပါဝင်သည်။ " +
-      "ကိုယ်ပိုင်မှတ်တမ်းနှင့် အကောင့်စနစ်အစစ် မချိတ်ဆက်ရသေးပါ။",
-    startOver: "အစသို့ ပြန်သွားမည်",
-  },
-};
+  const googleButton =
+    document.getElementById("google-button");
 
-const sampleMedicines = [
-  { en: "Paracetamol", my: "ပါရာစီတမော" },
-  { en: "Ibuprofen", my: "အိုင်ဗျူပရိုဖန်" },
-  { en: "Cetirizine", my: "စီတီရီဇင်း" },
-  { en: "Loratadine", my: "လိုရာတာဒင်း" },
-  { en: "Omeprazole", my: "အိုမီပရာဇိုး" },
-  { en: "Amoxicillin", my: "အမောက်စီစီလင်" },
-];
+  const googleLabel =
+    document.getElementById("google-label");
 
-const entryScreen = document.getElementById("entry-screen");
-const otpScreen = document.getElementById("otp-screen");
-const browseScreen = document.getElementById("browse-screen");
+  const signoutButton =
+    document.getElementById("signout-button");
 
-const identifierForm = document.getElementById("identifier-form");
-const identifierInput = document.getElementById("identifier");
+  const retryButton =
+    document.getElementById("retry-button");
 
-const otpForm = document.getElementById("otp-form");
-const otpInput = document.getElementById("otp");
+  const status = document.getElementById("status");
 
-const contactDisplay = document.getElementById("contact-display");
-const statusBox = document.getElementById("status");
-const searchInput = document.getElementById("medicine-search");
+  const TEXT = {
+    en: {
+      pageTitle: "Sign in | MediSafe",
+      eyebrow: "YOUR MEDICINE COMPANION",
 
-let language = "en";
-let messageKey = "";
-let messageType = "info";
-let selectedContact = "";
-let browsingMode = "guest";
+      introTitle:
+        "Understand your medicines. Make everyday care easier.",
 
-try {
-  const saved = localStorage.getItem("medisafe-language");
+      introDescription:
+        "Medicine information, Burmese audio and your daily medicine routine in one place.",
 
-  if (saved === "en" || saved === "my") {
-    language = saved;
-  }
-} catch {
-  // Language switching also works without browser storage.
-}
+      feature:
+        "Available in English and Myanmar.",
 
-function setMessage(key = "", type = "info") {
-  messageKey = key;
-  messageType = type;
+      footer:
+        "Made for everyday care.",
 
-  statusBox.className = `status-message ${messageType}`;
-  statusBox.textContent = key ? translations[language][key] : "";
-}
+      welcomeLabel:
+        "WELCOME TO MEDISAFE",
 
-function showScreen(screen) {
-  [entryScreen, otpScreen, browseScreen].forEach((section) => {
-    section.hidden = section !== screen;
-  });
+      welcome:
+        "An easier way to sign in",
 
-  setMessage();
+      entryDescription:
+        "Choose your Google account to continue. No new MediSafe password to remember.",
 
-  const heading = screen.querySelector("h2");
+      google:
+        "Continue with Google",
 
-  if (heading) {
-    heading.focus();
-  }
-}
+      loading:
+        "Preparing sign-in…",
 
-function renderLanguage() {
-  const text = translations[language];
+      signingIn:
+        "Opening Google…",
 
-  document.documentElement.lang = language;
-  document.title = text.title;
+      remember:
+        "Sign-in is remembered in this browser. Sign out after using a shared computer.",
 
-  document.querySelectorAll("[data-i18n]").forEach((element) => {
-    const value = text[element.dataset.i18n];
+      or:
+        "or",
 
-    if (value !== undefined) {
-      element.textContent = value;
+      continueGuest:
+        "Browse medicines without signing in",
+
+      signedInLabel:
+        "YOU ARE SIGNED IN",
+
+      accountTitle:
+        "Welcome back",
+
+      defaultName:
+        "MediSafe user",
+
+      continueMedicine:
+        "Open My Medicine",
+
+      signOut:
+        "Sign out",
+
+      retry:
+        "Try again",
+
+      signoutNote:
+        "Signing out does not delete this browser's medicine records or stop existing reminders.",
+
+      storageNote:
+        "Medicine records are currently stored in this browser. Google sign-in alone does not sync them between devices yet.",
+
+      signedOut:
+        "You have signed out.",
+
+      setup:
+        "Google sign-in has not been configured yet. You can still browse medicines.",
+
+      unavailable:
+        "Sign-in could not load. Check your internet connection and try again.",
+
+      closed:
+        "Sign-in was cancelled. You can try again when ready.",
+
+      popup:
+        "Google could not open. Allow pop-ups for this website and try again. On a phone, open the link directly in Chrome.",
+
+      domain:
+        "This website address has not been enabled for sign-in. Please contact the site owner.",
+
+      disabled:
+        "Google sign-in is not enabled yet. Please contact the site owner.",
+
+      network:
+        "Connection lost. Check your internet and try again.",
+
+      blocked:
+        "This account cannot sign in. Contact the site owner.",
+
+      storage:
+        "This browser could not remember sign-in. Use a normal Chrome window with browser storage enabled.",
+
+      failed:
+        "Sign-in did not complete. Please try again.",
+
+      signoutFailed:
+        "Could not sign out. Check your connection and try again."
+    },
+
+    my: {
+      pageTitle:
+        "အကောင့်ဝင်ရန် | MediSafe",
+
+      eyebrow:
+        "နေ့စဉ် ဆေးဝါးစောင့်ရှောက်မှုအတွက်",
+
+      introTitle:
+        "ဆေးအကြောင်း သိရှိပြီး နေ့စဉ်ကို ပိုလွယ်ကူစေပါ။",
+
+      introDescription:
+        "ဆေးအချက်အလက်၊ မြန်မာအသံနှင့် သင့်ဆေးသောက်အစီအစဉ်ကို တစ်နေရာတည်းတွင် ကြည့်ပါ။",
+
+      feature:
+        "အင်္ဂလိပ်နှင့် မြန်မာ နှစ်ဘာသာဖြင့် သုံးနိုင်ပါသည်။",
+
+      footer:
+        "နေ့စဉ် စောင့်ရှောက်မှုအတွက်။",
+
+      welcomeLabel:
+        "MEDISAFE မှ ကြိုဆိုပါသည်",
+
+      welcome:
+        "အလွယ်တကူ အကောင့်ဝင်ပါ",
+
+      entryDescription:
+        "သင့် Google အကောင့်ကို ရွေးပြီး ဆက်သုံးပါ။ MediSafe အတွက် စကားဝှက်အသစ် မှတ်စရာမလိုပါ။",
+
+      google:
+        "Google ဖြင့် ဆက်မည်",
+
+      loading:
+        "ပြင်ဆင်နေပါသည်…",
+
+      signingIn:
+        "Google ကို ဖွင့်နေပါသည်…",
+
+      remember:
+        "ဤ browser တွင် အကောင့်ဝင်ထားမှုကို မှတ်ထားပေးမည်။ အများသုံးစက်တွင် သုံးပြီးပါက အကောင့်ထွက်ပါ။",
+
+      or:
+        "သို့မဟုတ်",
+
+      continueGuest:
+        "အကောင့်မဝင်ဘဲ ဆေးရှာမည်",
+
+      signedInLabel:
+        "အကောင့်ဝင်ထားပြီးပါပြီ",
+
+      accountTitle:
+        "ကြိုဆိုပါသည်",
+
+      defaultName:
+        "MediSafe အသုံးပြုသူ",
+
+      continueMedicine:
+        "ကျွန်ုပ်၏ ဆေးစာရင်းသို့",
+
+      signOut:
+        "အကောင့်ထွက်မည်",
+
+      retry:
+        "ထပ်စမ်းမည်",
+
+      signoutNote:
+        "အကောင့်ထွက်ခြင်းက ဤ browser ၏ ဆေးမှတ်တမ်းနှင့် ရှိပြီးသား သတိပေးချက်များကို မဖျက်ပါ။",
+
+      storageNote:
+        "လက်ရှိ ဆေးမှတ်တမ်းများကို ဤ browser တွင်သာ သိမ်းထားသည်။ Google အကောင့်ဝင်ခြင်းတစ်ခုတည်းဖြင့် စက်များကြား မကူးပေးသေးပါ။",
+
+      signedOut:
+        "အကောင့်ထွက်ပြီးပါပြီ။",
+
+      setup:
+        "Google အကောင့်ဝင်စနစ်ကို မပြင်ဆင်ရသေးပါ။ အကောင့်မဝင်ဘဲ ဆေးရှာနိုင်ပါသည်။",
+
+      unavailable:
+        "အကောင့်ဝင်စနစ် ဖွင့်မရပါ။ အင်တာနက်စစ်ပြီး ထပ်စမ်းပါ။",
+
+      closed:
+        "အကောင့်ဝင်ခြင်းကို ရပ်ထားပါသည်။ အဆင်သင့်ဖြစ်ပါက ပြန်နှိပ်နိုင်ပါသည်။",
+
+      popup:
+        "Google window ဖွင့်မရပါ။ ဤ website အတွက် pop-up ခွင့်ပြုပြီး ပြန်စမ်းပါ။ ဖုန်းတွင် Chrome မှ တိုက်ရိုက်ဖွင့်ပါ။",
+
+      domain:
+        "ဤ website လိပ်စာကို အကောင့်ဝင်ရန် ခွင့်မပြုရသေးပါ။ Website တာဝန်ရှိသူကို ဆက်သွယ်ပါ။",
+
+      disabled:
+        "Google အကောင့်ဝင်စနစ် မဖွင့်ရသေးပါ။ Website တာဝန်ရှိသူကို ဆက်သွယ်ပါ။",
+
+      network:
+        "ချိတ်ဆက်မှု ပြတ်သွားပါသည်။ အင်တာနက်စစ်ပြီး ပြန်စမ်းပါ။",
+
+      blocked:
+        "ဤအကောင့်ဖြင့် ဝင်မရပါ။ Website တာဝန်ရှိသူကို ဆက်သွယ်ပါ။",
+
+      storage:
+        "ဤ browser တွင် အကောင့်ဝင်ထားမှုကို မှတ်မထားနိုင်ပါ။ Browser storage ဖွင့်ထားသော ပုံမှန် Chrome window ဖြင့် သုံးပါ။",
+
+      failed:
+        "အကောင့်ဝင်ခြင်း မအောင်မြင်ပါ။ ပြန်စမ်းပါ။",
+
+      signoutFailed:
+        "အကောင့်ထွက်မရပါ။ အင်တာနက်စစ်ပြီး ပြန်စမ်းပါ။"
     }
-  });
+  };
 
-  document.querySelectorAll("[data-language]").forEach((button) => {
-    button.setAttribute(
-      "aria-pressed",
-      String(button.dataset.language === language),
-    );
-  });
+  let language = "my";
 
-  identifierInput.placeholder = text.identifierPlaceholder;
-  searchInput.placeholder = text.searchPlaceholder;
+  try {
+    const saved =
+      localStorage.getItem("medisafe-language");
 
-  document.getElementById("browse-mode").textContent =
-    browsingMode === "guest" ? text.guestMode : text.demoMode;
-
-  setMessage(messageKey, messageType);
-  renderMedicines();
-}
-
-/* Accept English and Burmese digits. */
-function normaliseDigits(value) {
-  return value.replace(/[၀-၉]/g, (character) =>
-    String(character.charCodeAt(0) - "၀".charCodeAt(0)),
-  );
-}
-
-function normaliseContact(rawValue) {
-  const value = normaliseDigits(rawValue.trim());
-
-  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-    return value;
+    if (saved === "en" || saved === "my") {
+      language = saved;
+    }
+  } catch {
+    // Language switching can work without storage.
   }
 
-  let phone = value.replace(/[\s()-]/g, "");
+  let sdk = null;
+  let auth = null;
+  let provider = null;
+  let user = null;
 
-  if (phone.startsWith("0095")) {
-    phone = "+" + phone.slice(2);
-  } else if (phone.startsWith("09")) {
-    phone = "+95" + phone.slice(1);
-  } else if (phone.startsWith("959")) {
-    phone = "+" + phone;
+  let ready = false;
+  let busy = false;
+  let initializing = false;
+
+  let statusKey = "";
+  let statusError = false;
+  let canRetry = false;
+
+  let unsubscribe = null;
+
+  function render() {
+    const t = TEXT[language];
+
+    document.documentElement.lang = language;
+    document.title = t.pageTitle;
+
+    document
+      .querySelectorAll("[data-i18n]")
+      .forEach(element => {
+        const value =
+          t[element.dataset.i18n];
+
+        if (value !== undefined) {
+          element.textContent = value;
+        }
+      });
+
+    document
+      .querySelectorAll("[data-language]")
+      .forEach(button => {
+        button.setAttribute(
+          "aria-pressed",
+          String(
+            button.dataset.language === language
+          )
+        );
+      });
+
+    entry.hidden = Boolean(user);
+    account.hidden = !user;
+
+    googleButton.disabled =
+      !ready || busy;
+
+    googleLabel.textContent = busy
+      ? t.signingIn
+      : initializing
+        ? t.loading
+        : t.google;
+
+    signoutButton.disabled =
+      busy || !ready;
+
+    retryButton.hidden = !canRetry;
+
+    status.textContent = statusKey
+      ? t[statusKey]
+      : "";
+
+    status.className =
+      `status-message ${
+        statusError ? "error" : "info"
+      }`;
+
+    if (user) {
+      const name =
+        user.displayName || t.defaultName;
+
+      document.getElementById(
+        "account-name"
+      ).textContent = name;
+
+      document.getElementById(
+        "account-email"
+      ).textContent = user.email || "";
+
+      document.getElementById(
+        "account-avatar"
+      ).textContent =
+        Array.from(name.trim())[0] || "M";
+    }
+
+    if (auth) {
+      auth.languageCode = language;
+    }
   }
 
-  // Basic Myanmar mobile format check, not ownership verification.
-  if (/^\+959\d{7,9}$/.test(phone)) {
-    return phone;
+  function message(
+    key = "",
+    error = false
+  ) {
+    statusKey = key;
+    statusError = error;
+    render();
   }
 
-  return null;
-}
+  function errorKey(error) {
+    switch (error?.code) {
+      case "auth/popup-closed-by-user":
+      case "auth/cancelled-popup-request":
+        return "closed";
 
-function openBrowsing(mode) {
-  window.location.assign("./find-medicine.html");
-}
+      case "auth/popup-blocked":
+      case "auth/operation-not-supported-in-this-environment":
+        return "popup";
 
-function renderMedicines() {
-  const query = searchInput.value.trim().normalize("NFC").toLowerCase();
+      case "auth/unauthorized-domain":
+        return "domain";
 
-  const filtered = sampleMedicines.filter((medicine) =>
-    `${medicine.en} ${medicine.my}`
-      .normalize("NFC")
-      .toLowerCase()
-      .includes(query),
-  );
+      case "auth/operation-not-allowed":
+        return "disabled";
 
-  const list = document.getElementById("medicine-list");
-  list.replaceChildren();
+      case "auth/network-request-failed":
+        return "network";
 
-  filtered.forEach((medicine) => {
-    const item = document.createElement("li");
-    const primary = document.createElement("strong");
-    const secondary = document.createElement("span");
+      case "auth/user-disabled":
+        return "blocked";
 
-    primary.textContent = language === "my" ? medicine.my : medicine.en;
+      case "auth/web-storage-unsupported":
+        return "storage";
 
-    secondary.textContent = language === "my" ? medicine.en : medicine.my;
+      case "auth/invalid-api-key":
+      case "auth/configuration-not-found":
+        return "setup";
 
-    primary.lang = language;
-    secondary.lang = language === "my" ? "en" : "my";
+      default:
+        return "failed";
+    }
+  }
 
-    item.append(primary, secondary);
-    list.append(item);
-  });
+  async function loadSDK() {
+    const base =
+      `https://www.gstatic.com/firebasejs/${SDK_VERSION}`;
 
-  document.getElementById("no-results").hidden = filtered.length !== 0;
-}
+    const [
+      appSDK,
+      authSDK
+    ] = await Promise.all([
+      import(`${base}/firebase-app.js`),
+      import(`${base}/firebase-auth.js`)
+    ]);
 
-/* Language selection */
-document.querySelectorAll("[data-language]").forEach((button) => {
-  button.addEventListener("click", () => {
-    language = button.dataset.language;
+    return {
+      ...appSDK,
+      ...authSDK
+    };
+  }
+
+  async function initialize() {
+    if (initializing) return;
+
+    const missingConfig =
+      Object.values(firebaseConfig).some(
+        value =>
+          !value ||
+          value.includes("YOUR_")
+      );
+
+    if (missingConfig) {
+      canRetry = false;
+      message("setup", true);
+      return;
+    }
+
+    initializing = true;
+    ready = false;
+    canRetry = false;
+
+    message();
+
+    let timeout;
 
     try {
-      localStorage.setItem("medisafe-language", language);
-    } catch {
-      // Storing the language preference is optional.
+      sdk = await Promise.race([
+        loadSDK(),
+
+        new Promise((_, reject) => {
+          timeout = setTimeout(
+            () => reject(
+              new Error("SDK loading timed out")
+            ),
+            25000
+          );
+        })
+      ]);
+
+      clearTimeout(timeout);
+
+      const app =
+        sdk.getApps().length
+          ? sdk.getApp()
+          : sdk.initializeApp(
+              firebaseConfig
+            );
+
+      auth = sdk.getAuth(app);
+
+      auth.languageCode = language;
+
+      await sdk.setPersistence(
+        auth,
+        sdk.browserLocalPersistence
+      );
+
+      provider =
+        new sdk.GoogleAuthProvider();
+
+      provider.setCustomParameters({
+        prompt: "select_account"
+      });
+
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      unsubscribe =
+        sdk.onAuthStateChanged(
+          auth,
+
+          currentUser => {
+            user = currentUser;
+            ready = true;
+            render();
+          },
+
+          error => {
+            console.error(
+              "Auth state error:",
+              error.code
+            );
+
+            ready = false;
+            canRetry = true;
+
+            message(
+              errorKey(error),
+              true
+            );
+          }
+        );
+    } catch (error) {
+      console.error(
+        "Google sign-in setup failed:",
+        error.code || "SDK load failed"
+      );
+
+      canRetry = true;
+
+      const key = errorKey(error);
+
+      message(
+        key === "failed"
+          ? "unavailable"
+          : key,
+        true
+      );
+    } finally {
+      clearTimeout(timeout);
+
+      initializing = false;
+      render();
     }
-
-    renderLanguage();
-  });
-});
-
-/* Guest access */
-document.getElementById("guest-button").addEventListener("click", () => {
-  selectedContact = "";
-  identifierForm.reset();
-
-  openBrowsing("guest");
-});
-
-/* Email / phone entry */
-identifierForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  const contact = normaliseContact(identifierInput.value);
-
-  if (!contact) {
-    identifierInput.setAttribute("aria-invalid", "true");
-    setMessage("invalidContact", "error");
-    identifierInput.focus();
-    return;
   }
 
-  identifierInput.removeAttribute("aria-invalid");
-  selectedContact = contact;
+  googleButton.addEventListener(
+    "click",
+    async () => {
+      if (!ready || busy) return;
 
-  contactDisplay.textContent = selectedContact;
-  otpInput.value = "";
+      busy = true;
+      canRetry = false;
+      message();
 
-  showScreen(otpScreen);
-  otpInput.focus();
-});
+      try {
+        // Google handles credentials in its own window.
+        await sdk.signInWithPopup(
+          auth,
+          provider
+        );
 
-/* OTP demonstration */
-otpForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+        window.location.assign(
+          "./my-medicines.html"
+        );
+      } catch (error) {
+        console.error(
+          "Google sign-in failed:",
+          error.code
+        );
 
-  const code = normaliseDigits(otpInput.value.trim());
-  otpInput.value = code;
+        const key = errorKey(error);
 
-  if (code !== DEMO_OTP) {
-    otpInput.setAttribute("aria-invalid", "true");
-    setMessage("invalidCode", "error");
-    otpInput.focus();
-    return;
-  }
+        message(
+          key,
+          key !== "closed"
+        );
+      } finally {
+        busy = false;
+        render();
+      }
+    }
+  );
 
-  otpInput.removeAttribute("aria-invalid");
+  signoutButton.addEventListener(
+    "click",
+    async () => {
+      if (!ready || busy) return;
 
-  // This opens a preview; it does not authenticate a real account.
-  openBrowsing("demo");
-});
+      busy = true;
+      message();
 
-document.getElementById("back-button").addEventListener("click", () => {
-  otpInput.value = "";
-  showScreen(entryScreen);
-  identifierInput.focus();
-});
+      try {
+        await sdk.signOut(auth);
 
-document.getElementById("resend-button").addEventListener("click", () => {
-  otpInput.value = "";
-  otpInput.removeAttribute("aria-invalid");
+        user = null;
+        message("signedOut");
+      } catch (error) {
+        console.error(
+          "Sign-out failed:",
+          error.code
+        );
 
-  setMessage("codeReset");
-  otpInput.focus();
-});
+        message(
+          "signoutFailed",
+          true
+        );
+      } finally {
+        busy = false;
+        render();
+      }
+    }
+  );
 
-document.getElementById("start-over").addEventListener("click", () => {
-  selectedContact = "";
-  contactDisplay.textContent = "";
+  retryButton.addEventListener(
+    "click",
+    initialize
+  );
 
-  identifierForm.reset();
-  otpForm.reset();
+  document
+    .querySelectorAll("[data-language]")
+    .forEach(button => {
+      button.addEventListener(
+        "click",
+        () => {
+          language =
+            button.dataset.language === "en"
+              ? "en"
+              : "my";
 
-  identifierInput.removeAttribute("aria-invalid");
-  otpInput.removeAttribute("aria-invalid");
+          try {
+            localStorage.setItem(
+              "medisafe-language",
+              language
+            );
+          } catch {
+            // The language can still change.
+          }
 
-  showScreen(entryScreen);
-});
+          render();
+        }
+      );
+    });
 
-identifierInput.addEventListener("input", () => {
-  identifierInput.removeAttribute("aria-invalid");
-  setMessage();
-});
-
-otpInput.addEventListener("input", () => {
-  otpInput.value = normaliseDigits(otpInput.value)
-    .replace(/\D/g, "")
-    .slice(0, 6);
-
-  otpInput.removeAttribute("aria-invalid");
-  setMessage();
-});
-
-searchInput.addEventListener("input", renderMedicines);
-
-renderLanguage();
+  render();
+  initialize();
+})();

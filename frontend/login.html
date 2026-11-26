@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MediSafe</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>အကောင့်ဝင်ရန် | MediSafe</title>
 
   <link rel="stylesheet" href="./login.css">
   <script src="./login.js" defer></script>
@@ -12,55 +16,75 @@
 
 <body>
   <main class="login-page">
-
-    <section class="intro-panel" aria-labelledby="intro-title">
+    <section
+      class="intro-panel"
+      aria-labelledby="intro-title"
+    >
       <div class="brand">
-        <span class="brand-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48" fill="none">
-            <path
-              d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
-              fill="currentColor"
-            />
-            <path
-              d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
-              fill="white"
-            />
-          </svg>
-        </span>
+  <span class="brand-icon" aria-hidden="true">
+    <svg viewBox="0 0 48 48" fill="none">
+      <path
+        d="M19 10h10v9h9v10h-9v9H19v-9h-9V19h9z"
+        fill="currentColor"
+      />
 
-        <span class="brand-name">MediSafe</span>
-      </div>
+      <path
+        d="m38 5 1.5 4.5L44 11l-4.5 1.5L38 17l-1.5-4.5L32 11l4.5-1.5z"
+        fill="white"
+      />
+    </svg>
+  </span>
+
+  <span class="brand-name">MediSafe</span>
+</div>
 
       <div class="intro-content">
-        <p class="eyebrow" data-i18n="eyebrow"></p>
-        <h1 id="intro-title" data-i18n="introTitle"></h1>
-        <p class="intro-description" data-i18n="introDescription"></p>
+        <p class="eyebrow" data-i18n="eyebrow">
+          နေ့စဉ် ဆေးဝါးစောင့်ရှောက်မှုအတွက်
+        </p>
+
+        <h1 id="intro-title" data-i18n="introTitle">
+          ဆေးအကြောင်း သိရှိပြီး နေ့စဉ်ကို ပိုလွယ်ကူစေပါ။
+        </h1>
+
+        <p
+          class="intro-description"
+          data-i18n="introDescription"
+        >
+          ဆေးအချက်အလက်၊ မြန်မာအသံနှင့်
+          သင့်ဆေးသောက်အစီအစဉ်ကို တစ်နေရာတည်းတွင် ကြည့်ပါ။
+        </p>
 
         <div class="feature-card">
-          <span class="feature-icon" aria-hidden="true">✚</span>
-          <p data-i18n="feature"></p>
+          <span class="feature-icon" aria-hidden="true">
+            ✚
+          </span>
+
+          <p data-i18n="feature">
+            အင်္ဂလိပ်နှင့် မြန်မာ နှစ်ဘာသာဖြင့် သုံးနိုင်ပါသည်။
+          </p>
         </div>
       </div>
 
-      <p class="intro-footer" data-i18n="footer"></p>
+      <p class="intro-footer" data-i18n="footer">
+        နေ့စဉ် စောင့်ရှောက်မှုအတွက်။
+      </p>
     </section>
 
-    <section class="form-panel">
+    <section class="form-panel" aria-label="Account">
       <nav class="language-switch" aria-label="Language">
         <button
           type="button"
-          class="language-button"
           data-language="en"
-          aria-pressed="true"
+          aria-pressed="false"
         >
           English
         </button>
 
         <button
           type="button"
-          class="language-button"
           data-language="my"
-          aria-pressed="false"
+          aria-pressed="true"
           lang="my"
         >
           မြန်မာ
@@ -68,150 +92,124 @@
       </nav>
 
       <div class="form-container">
-        <p class="preview-badge" data-i18n="previewBadge"></p>
-
-        <!-- Email / phone screen -->
-        <section id="entry-screen" aria-labelledby="entry-title">
-          <p class="form-eyebrow" data-i18n="welcomeLabel"></p>
-
-          <h2 id="entry-title" tabindex="-1" data-i18n="welcome"></h2>
-
-          <p class="description" data-i18n="entryDescription"></p>
-
-          <button
-            id="guest-button"
-            class="primary-button"
-            type="button"
-            data-i18n="continueGuest"
-          ></button>
-
-          <p class="helper-text" data-i18n="guestDescription"></p>
-
-          <div class="divider">
-            <span data-i18n="or"></span>
-          </div>
-
-          <form id="identifier-form" novalidate>
-            <label for="identifier" data-i18n="identifierLabel"></label>
-
-            <input
-              id="identifier"
-              name="identifier"
-              type="text"
-              autocomplete="username"
-              autocapitalize="none"
-              spellcheck="false"
-              maxlength="254"
-              aria-describedby="identifier-help"
-              required
-            >
-
-            <p
-              id="identifier-help"
-              class="helper-text"
-              data-i18n="identifierHelp"
-            ></p>
-
-            <button
-              class="secondary-button"
-              type="submit"
-              data-i18n="sendCode"
-            ></button>
-          </form>
-
-          <p class="bottom-note" data-i18n="noPassword"></p>
-        </section>
-
-        <!-- OTP screen -->
-        <section id="otp-screen" aria-labelledby="otp-title" hidden>
-          <button
-            id="back-button"
-            class="text-button"
-            type="button"
-            data-i18n="changeContact"
-          ></button>
-
-          <h2 id="otp-title" tabindex="-1" data-i18n="otpTitle"></h2>
-
-          <p class="description">
-            <span data-i18n="otpDescription"></span>
-            <strong id="contact-display"></strong>
+        <section
+          id="entry-screen"
+          aria-labelledby="entry-title"
+        >
+          <p class="form-eyebrow" data-i18n="welcomeLabel">
+            MEDISAFE မှ ကြိုဆိုပါသည်
           </p>
 
-          <div class="demo-notice">
-            <span data-i18n="demoCode"></span>
-            <strong>123456</strong>
+          <h2 id="entry-title" data-i18n="welcome">
+            အလွယ်တကူ အကောင့်ဝင်ပါ
+          </h2>
+
+          <p class="description" data-i18n="entryDescription">
+            သင့် Google အကောင့်ကို ရွေးပြီး ဆက်သုံးပါ။
+            MediSafe အတွက် စကားဝှက်အသစ် မှတ်စရာမလိုပါ။
+          </p>
+
+          <button
+            id="google-button"
+            class="google-button"
+            type="button"
+            disabled
+          >
+            <svg
+              viewBox="0 0 48 48"
+              width="22"
+              height="22"
+              aria-hidden="true"
+            >
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+              />
+
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C44.4 38.02 46.98 31.86 46.98 24.55z"
+              />
+
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.87 23.87 0 0 0 0 24c0 3.87.93 7.53 2.56 10.78l7.97-6.19z"
+              />
+
+              <path
+                fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.9-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+              />
+            </svg>
+
+            <span id="google-label">
+              ပြင်ဆင်နေပါသည်…
+            </span>
+          </button>
+
+          <p class="helper-text" data-i18n="remember">
+            ဤ browser တွင် အကောင့်ဝင်ထားမှုကို မှတ်ထားပေးမည်။
+            အများသုံးစက်တွင် သုံးပြီးပါက အကောင့်ထွက်ပါ။
+          </p>
+
+          <div class="divider">
+            <span data-i18n="or">သို့မဟုတ်</span>
           </div>
 
-          <form id="otp-form" novalidate>
-            <label for="otp" data-i18n="otpLabel"></label>
-
-            <input
-              id="otp"
-              class="otp-input"
-              name="otp"
-              type="text"
-              inputmode="numeric"
-              autocomplete="one-time-code"
-              pattern="[0-9]{6}"
-              minlength="6"
-              maxlength="6"
-              placeholder="000000"
-              required
-            >
-
-            <button
-              class="primary-button"
-              type="submit"
-              data-i18n="verifyCode"
-            ></button>
-          </form>
-
-          <button
-            id="resend-button"
-            class="text-button resend-button"
-            type="button"
-            data-i18n="resend"
-          ></button>
+          <a
+            class="guest-link"
+            href="./find-medicine.html"
+            data-i18n="continueGuest"
+          >
+            အကောင့်မဝင်ဘဲ ဆေးရှာမည်
+          </a>
         </section>
 
-        <!-- Frontend browsing preview -->
-        <section id="browse-screen" aria-labelledby="browse-title" hidden>
-          <p
-            id="browse-mode"
-            class="form-eyebrow"
-            data-i18n="guestMode"
-          ></p>
-
-          <h2 id="browse-title" tabindex="-1" data-i18n="browseTitle"></h2>
-
-          <p class="description" data-i18n="browseDescription"></p>
-
-          <label for="medicine-search" data-i18n="searchLabel"></label>
-
-          <input
-            id="medicine-search"
-            type="search"
-            autocomplete="off"
+        <section
+          id="account-screen"
+          aria-labelledby="account-title"
+          hidden
+        >
+          <div
+            id="account-avatar"
+            class="account-avatar"
+            aria-hidden="true"
           >
+            M
+          </div>
 
-          <ul id="medicine-list" class="medicine-list"></ul>
+          <p class="form-eyebrow" data-i18n="signedInLabel">
+            အကောင့်ဝင်ထားပြီးပါပြီ
+          </p>
 
-          <p
-            id="no-results"
-            class="helper-text"
-            data-i18n="noResults"
-            hidden
-          ></p>
+          <h2 id="account-title" data-i18n="accountTitle">
+            ကြိုဆိုပါသည်
+          </h2>
 
-          <p class="helper-text" data-i18n="sampleNotice"></p>
+          <p id="account-name" class="account-name"></p>
+          <p id="account-email" class="account-email"></p>
+
+          <a
+            class="primary-button"
+            href="./my-medicines.html"
+            data-i18n="continueMedicine"
+          >
+            ကျွန်ုပ်၏ ဆေးစာရင်းသို့
+          </a>
 
           <button
-            id="start-over"
-            class="secondary-button"
+            id="signout-button"
+            class="text-button"
             type="button"
-            data-i18n="startOver"
-          ></button>
+            data-i18n="signOut"
+          >
+            အကောင့်ထွက်မည်
+          </button>
+
+          <p class="helper-text" data-i18n="signoutNote">
+            အကောင့်ထွက်ခြင်းက ဤ browser ၏
+            ဆေးမှတ်တမ်းနှင့် ရှိပြီးသား သတိပေးချက်များကို မဖျက်ပါ။
+          </p>
         </section>
 
         <p
@@ -221,6 +219,28 @@
           aria-live="polite"
           aria-atomic="true"
         ></p>
+
+        <button
+          id="retry-button"
+          class="text-button"
+          type="button"
+          data-i18n="retry"
+          hidden
+        >
+          ထပ်စမ်းမည်
+        </button>
+
+        <p class="storage-note" data-i18n="storageNote">
+          လက်ရှိ ဆေးမှတ်တမ်းများကို ဤ browser တွင်သာ သိမ်းထားသည်။
+          Google အကောင့်ဝင်ခြင်းတစ်ခုတည်းဖြင့်
+          စက်များကြား မကူးပေးသေးပါ။
+        </p>
+
+        <noscript>
+          Google sign-in requires JavaScript.
+          You can still
+          <a href="./find-medicine.html">browse medicines</a>.
+        </noscript>
       </div>
     </section>
   </main>
